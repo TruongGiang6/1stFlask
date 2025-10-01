@@ -42,7 +42,7 @@ def register():
                 'email': email,
                 'phone': phone
             }
-            flash('Đăng ký thành công! Hãy đăng nhập.')
+            flash('Đăng ký thành công! Hãy đăng nhập!')
             session['last_username'] = username
             return redirect(url_for('login'))
     return render_template('register.html')
