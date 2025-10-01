@@ -3,8 +3,11 @@ from flask import Flask, redirect, url_for, render_template, request, flash, ses
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Để sử dụng session và flash
 
-users = {}  # Lưu user tạm thời (chỉ dùng demo)
+users = {}  # Lưu user tạm thời (demo)
 
+@app.route('/')
+def home():
+    return redirect(url_for('dashboard'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -13,6 +16,7 @@ def login():
         password = request.form.get('password')
         if username in users and users[username]['password'] == password:
             session['username'] = username
+            flash('Đăng nhập thành công!')
             return redirect(url_for('dashboard'))
         else:
             flash('Sai tên số điện thoại/email hoặc mật khẩu!')
@@ -27,13 +31,14 @@ def register():
         confirm_password = request.form.get('confirm_password')
         email = request.form.get('email')
         phone = request.form.get('phone')
+
         # Kiểm tra xác nhận mật khẩu
         if password != confirm_password:
             flash('Mật khẩu xác nhận không trùng khớp. Mời điền lại!')
         elif username in users:
             flash('Tài khoản đã tồn tại!')
         else:
-            # Lưu thông tin user (demo: chỉ lưu vào dict)
+            # Lưu user
             users[username] = {
                 'password': password,
                 'email': email,
@@ -46,9 +51,14 @@ def register():
 
 @app.route('/dashboard')
 def dashboard():
-    if 'username' in session:
-        return render_template('dashboard.html')
-    return redirect(url_for('login'))
+    username = session.get('username')  # lấy user đã login
+    return render_template('dashboard.html', username=username)
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    flash("Bạn đã đăng xuất!")
+    return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

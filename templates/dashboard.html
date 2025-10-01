@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Football Careers Dashboard</title>
+    <title>Football Connect</title>
     <style>
         body { margin: 0; font-family: Arial, sans-serif; background: #f6f6f6; }
         .navbar {
@@ -12,8 +12,17 @@
             height: 70px;
         }
         .navbar img { height: 50px; margin-right: 20px; }
-        .navbar .menu { display: flex; gap: 30px; flex: 1; }
-        .navbar .menu a { text-decoration: none; color: #222; font-weight: 500; padding: 0 8px; }
+        .navbar .menu { 
+            display: flex; 
+            justify-content: space-around; /* cách đều nhau */
+            flex: 1; 
+        }
+        .navbar .menu a { 
+            text-decoration: none; 
+            color: #222; 
+            font-weight: bold; /* chữ đậm */
+            font-size: 16px;
+        }
         .navbar .user { font-weight: bold; margin-left: auto; }
         .container { display: flex; margin-top: 0; }
         .sidebar {
@@ -38,7 +47,7 @@
         }
         .filter-box h3, .search-results-box h4 { margin-top: 0; width: 100%; }
         .filter-box input, .filter-box select, .filter-box button {
-            width: 96%;          /* đồng bộ chiều rộng với khung */
+            width: 96%;
             height: 40px;
             margin-bottom: 14px;
             padding: 8px;
@@ -131,13 +140,19 @@
             <a href="#">Người dùng 1</a>
             <a href="#">Giới thiệu</a>
             <a href="#">Liên hệ</a>
-            <a href="#">Tìm kiếm</a>
             <a href="#">Chức năng</a>
             <a href="#">Đánh giá chúng tôi</a>
-            <a href="{{ url_for('login') }}">Đăng nhập/Đăng kí</a>
         </div>
-        <div class="user">John Player</div>
+        <div class="user">
+            {% if username %}
+                Xin chào, {{ username }} | <a href="{{ url_for('logout') }}">Đăng xuất</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Đăng nhập</a> / 
+                <a href="{{ url_for('register') }}">Đăng ký</a>
+            {% endif %}
+        </div>
     </div>
+
     <!-- Main content -->
     <div class="container">
         <!-- Sidebar -->
@@ -170,7 +185,7 @@
         <div class="main-content">
             <h2>Available Opportunities (12)</h2>
             <div class="cards">
-                <!-- Card 1 -->
+                <!-- Ví dụ card -->
                 <div class="card">
                     <span class="club">Manchester United FC <span class="type">Permanent</span></span>
                     <span class="position">Forward</span>
@@ -178,71 +193,6 @@
                     <span class="salary">£50,000 - £90,000</span>
                     <span class="posted">Posted 2 days ago</span>
                     <div class="desc">Seeking a dynamic forward to join our first team squad. Must have excellent finishing ability and pace.</div>
-                    <div class="actions">
-                        <button class="save">Save Job</button>
-                        <button class="view">View Details</button>
-                    </div>
-                </div>
-                <!-- Card 2 -->
-                <div class="card">
-                    <span class="club">Barcelona Youth Academy <span class="type trial">Trial</span></span>
-                    <span class="position">Midfielder</span>
-                    <span class="location">Barcelona, Spain</span>
-                    <span class="salary">£25,000 - £35,000</span>
-                    <span class="posted">Posted 1 days ago</span>
-                    <div class="desc">Opportunity for talented young midfielder to join our renowned youth development program.</div>
-                    <div class="actions">
-                        <button class="save">Save Job</button>
-                        <button class="view">View Details</button>
-                    </div>
-                </div>
-                <!-- Card 3 -->
-                <div class="card">
-                    <span class="club">Chelsea FC <span class="type loan">Loan</span></span>
-                    <span class="position">Defender</span>
-                    <span class="location">London, England</span>
-                    <span class="salary">£40,000 - £60,000</span>
-                    <span class="posted">Posted 3 days ago</span>
-                    <div class="desc">Looking for a solid centre-back to strengthen our defensive line for the upcoming season.</div>
-                    <div class="actions">
-                        <button class="save">Save Job</button>
-                        <button class="view">View Details</button>
-                    </div>
-                </div>
-                <!-- Card 4 -->
-                <div class="card">
-                    <span class="club">Real Madrid CF <span class="type">Permanent</span></span>
-                    <span class="position">Goalkeeper</span>
-                    <span class="location">Madrid, Spain</span>
-                    <span class="salary">£45,000 - £70,000</span>
-                    <span class="posted">Posted 3 days ago</span>
-                    <div class="desc">Experienced goalkeeper needed to compete for first team position. Must have excellent shot-stopping ability.</div>
-                    <div class="actions">
-                        <button class="save">Save Job</button>
-                        <button class="view">View Details</button>
-                    </div>
-                </div>
-                <!-- Card 5 -->
-                <div class="card">
-                    <span class="club">Ajax Amsterdam <span class="type">Permanent</span></span>
-                    <span class="position">Midfielder</span>
-                    <span class="location">Amsterdam, Netherlands</span>
-                    <span class="salary">£30,000 - £45,000</span>
-                    <span class="posted">Posted 1 days ago</span>
-                    <div class="desc">Creative midfielder wanted to join our possession-based playing style. Technical ability essential.</div>
-                    <div class="actions">
-                        <button class="save">Save Job</button>
-                        <button class="view">View Details</button>
-                    </div>
-                </div>
-                <!-- Card 6 -->
-                <div class="card">
-                    <span class="club">FC Bayern Munich <span class="type loan">Loan</span></span>
-                    <span class="position">Forward</span>
-                    <span class="location">Munich, Germany</span>
-                    <span class="salary">£55,000 - £85,000</span>
-                    <span class="posted">Posted 4 days ago</span>
-                    <div class="desc">Striker needed for loan spell. Must be able to adapt to high-intensity training and match situations.</div>
                     <div class="actions">
                         <button class="save">Save Job</button>
                         <button class="view">View Details</button>
