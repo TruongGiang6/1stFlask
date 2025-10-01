@@ -5,9 +5,6 @@ app.secret_key = 'your_secret_key'  # Để sử dụng session và flash
 
 users = {}  # Lưu user tạm thời (chỉ dùng demo)
 
-@app.route('/')
-def home():
-    return render_template('home.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
