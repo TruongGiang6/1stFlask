@@ -1,9 +1,26 @@
 from flask import Flask, redirect, url_for, render_template, request, flash, session
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Để sử dụng session và flash
+app.secret_key = 'your_secret_key'
 
-users = {}  # Lưu user tạm thời (demo)
+# Cấu hình SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# Bảng user
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    phone = db.Column(db.String(20))
+
+# Tạo DB
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def home():
@@ -14,12 +31,13 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        if username in users and users[username]['password'] == password:
-            session['username'] = username
-            flash('Đăng nhập thành công!')
+
+        user = User.query.filter_by(username=username, password=password).first()
+        if user:
+            session['username'] = user.username
             return redirect(url_for('dashboard'))
         else:
-            flash('Sai tên số điện thoại/email hoặc mật khẩu!')
+            flash('Sai tên đăng nhập hoặc mật khẩu!')
     last_username = session.pop('last_username', '')
     return render_template('login.html', last_username=last_username)
 
@@ -32,18 +50,14 @@ def register():
         email = request.form.get('email')
         phone = request.form.get('phone')
 
-        # Kiểm tra xác nhận mật khẩu
         if password != confirm_password:
             flash('Mật khẩu xác nhận không trùng khớp. Mời điền lại!')
-        elif username in users:
+        elif User.query.filter_by(username=username).first():
             flash('Tài khoản đã tồn tại!')
         else:
-            # Lưu user
-            users[username] = {
-                'password': password,
-                'email': email,
-                'phone': phone
-            }
+            new_user = User(username=username, password=password, email=email, phone=phone)
+            db.session.add(new_user)
+            db.session.commit()
             flash('Đăng ký thành công! Hãy đăng nhập!')
             session['last_username'] = username
             return redirect(url_for('login'))
@@ -51,7 +65,7 @@ def register():
 
 @app.route('/dashboard')
 def dashboard():
-    username = session.get('username')  # lấy user đã login
+    username = session.get('username')
     return render_template('dashboard.html', username=username)
 
 @app.route('/logout')
@@ -61,4 +75,4 @@ def logout():
     return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True)
