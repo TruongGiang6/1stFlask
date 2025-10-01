@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Đăng ký tài khoản</title>
+    <style>
+        body { background: #f6f6f6; font-family: Arial, sans-serif; }
+        .main { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #ccc; padding: 40px; }
+        h2 { margin-bottom: 30px; text-align: right; }
+        .form-row { display: flex; gap: 20px; margin-bottom: 18px; }
+        .form-group { flex: 1; display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 6px; }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"] {
+            padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px;
+        }
+        .btn { width: 100%; padding: 12px; background: #1e8c3a; color: #fff; border: none; border-radius: 6px; font-size: 18px; margin-top: 20px; cursor: pointer; }
+        .link { text-align: center; margin-top: 18px; }
+        ul { color: red; }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <h2>Đăng kí thông tin</h2>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        <form method="POST">
+          <div class="form-row">
+              <div class="form-group">
+                  <label>Tên đăng nhập*</label>
+                  <input type="text" name="username" required placeholder="Nhập tên đăng nhập">
+              </div>
+          </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email*</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Số Điện Thoại*</label>
+                    <input type="tel" name="phone" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Mật Khẩu*</label>
+                    <input type="password" name="password" required minlength="8" maxlength="15" placeholder="Từ 8 đến 15 ký tự">
+                </div>
+                <div class="form-group">
+                    <label>Xác Nhận Mật Khẩu*</label>
+                    <input type="password" name="confirm_password" required minlength="8" maxlength="15" placeholder="Nhập lại mật khẩu">
+                </div>
+            </div>
+            <button class="btn" type="submit">Đăng ký</button>
+        </form>
+        <div class="link">
+            <a href="{{ url_for('login') }}">Đã có tài khoản? Đăng nhập</a>
+        </div>
+    </div>
+</body>
+</html>
