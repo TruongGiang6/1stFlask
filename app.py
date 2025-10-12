@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, render_template, request, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask import get_flashed_messages # Thêm import này
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -11,13 +12,25 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+# Flask-Login setup
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
 # Bảng user
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone = db.Column(db.String(20))
+
+    def get_id(self):
+        return str(self.id)
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 # Tạo DB
 with app.app_context():
@@ -32,19 +45,14 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-
         user = User.query.filter_by(username=username, password=password).first()
         if user:
-            # Lưu username vào session khi đăng nhập thành công
-            session['username'] = user.username
+            login_user(user)
             flash('Đăng nhập thành công!', 'success')
             return redirect(url_for('dashboard'))
         else:
             flash('Sai tên đăng nhập hoặc mật khẩu!', 'error')
-    
-    # Lấy tên người dùng cuối cùng đã đăng ký để điền sẵn vào form login
     last_username = session.pop('last_username', '')
-    # Truyền flash messages vào template login.html
     return render_template('login.html', last_username=last_username)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -69,22 +77,20 @@ def register():
             flash('Đăng ký thành công! Hãy đăng nhập!', 'success')
             session['last_username'] = username
             return redirect(url_for('login'))
-            
-    # Truyền flash messages vào template register.html
     return render_template('register.html')
 
 @app.route('/dashboard')
 def dashboard():
-    username = session.get('username')
-    # Thêm get_flashed_messages() để thông báo được hiển thị
+    username = current_user.username if current_user.is_authenticated else None
     messages = get_flashed_messages(with_categories=True)
     return render_template('dashboard.html', username=username, messages=messages)
 
 @app.route('/logout')
+@login_required
 def logout():
-    session.pop('username', None)
+    logout_user()
     flash("Bạn đã đăng xuất!", 'success')
-    return redirect(url_for('dashboard'))
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -67,9 +67,7 @@
     <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
         <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative">
             <button onclick="closeModal('login')" class="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-xl">&times;</button>
-            <div class="logo-text text-green-600 flex items-center justify-center text-2xl font-bold mb-4">
-                <img src="{{ url_for('static', filename='fbcn.png') }}" alt="icon" class="w-8 h-8 mr-2"> Football Connect
-            </div>
+            <!-- Đã xóa logo và chữ Football Connect ở modal đăng nhập -->
             <h2 class="text-xl font-bold text-center mb-6 text-green-600">Đăng nhập tài khoản</h2>
             <form>
                 <div class="mb-4">
@@ -92,14 +90,12 @@
     <div id="register-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
         <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md relative">
             <button onclick="closeModal('register')" class="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-xl">&times;</button>
-            <div class="logo-text text-green-600 flex items-center justify-center text-2xl font-bold mb-4">
-                <img src="{{ url_for('static', filename='fbcn.png') }}" alt="icon" class="w-8 h-8 mr-2"> Football Connect
-            </div>
+            <!-- Đã xóa logo và chữ Football Connect ở modal đăng ký -->
             <h2 class="text-xl font-bold text-center mb-6 text-green-600">Đăng ký tài khoản</h2>
             <form>
                 <div class="mb-4">
-                    <label for="register-name" class="block text-sm font-medium text-gray-700 mb-1">Họ và tên</label>
-                    <input type="text" id="register-name" name="name" class="input-field w-full border rounded-lg px-3 py-2" placeholder="Nhập họ tên đầy đủ" required>
+                    <label for="register-username" class="block text-sm font-medium text-gray-700 mb-1">Tên đăng nhập</label>
+                    <input type="text" id="register-username" name="username" class="input-field w-full border rounded-lg px-3 py-2" placeholder="Nhập tên đăng nhập" required>
                 </div>
                 <div class="mb-4">
                     <label for="register-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
