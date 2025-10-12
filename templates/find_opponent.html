@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Tin Tìm Đối Thủ - Football Connect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="{{ url_for('home') }}" class="flex items-center font-bold text-2xl text-green-600">
+                <i class="fa-solid fa-futbol text-green-600 text-4xl mr-2"></i>
+                <span>Football Connect</span>
+            </a>
+            <div class="flex items-center space-x-3">
+                {% if current_user.is_authenticated %}
+                <div class="relative">
+                    <button id="user-menu-button" class="flex items-center bg-gray-100 rounded-xl px-4 py-2 space-x-2 text-left hover:bg-gray-200 focus:outline-none transition">
+                        <i class="fa-regular fa-user-circle text-green-700 text-2xl"></i>
+                        <span class="font-bold text-green-700 text-lg">{{ current_user.username }}</span>
+                        <i class="fa-solid fa-chevron-down text-green-700 text-xs ml-2"></i>
+                    </button>
+                    <div id="user-menu" class="hidden absolute right-0 mt-2 w-full bg-white rounded-md shadow-xl z-50 border border-gray-100">
+                        <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-green-50 transition"><i class="fa-solid fa-address-card w-6 mr-1 text-center"></i><span>Thông tin</span></a>
+                        <a href="{{ url_for('logout') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-green-50 transition"><i class="fa-solid fa-right-from-bracket w-6 mr-1 text-center"></i><span>Đăng xuất</span></a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{{ url_for('home', _anchor='login') }}" class="bg-green-500 text-white font-semibold px-5 py-2 rounded-lg hover:bg-green-600 transition">Đăng nhập</a>
+                <a href="{{ url_for('home', _anchor='register') }}" class="bg-green-500 text-white font-semibold px-5 py-2 rounded-lg hover:bg-blue-600 transition">Đăng ký</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <div class="mb-6">
+            <!-- The button previously here has been moved to the bottom of the form -->
+        </div>
+        <!-- Post Creation Form -->
+        <div class="bg-white p-8 rounded-2xl shadow-lg max-w-3xl mx-auto">
+            <form id="post-form" action="{{ url_for('find_opponent') }}" method="POST" class="space-y-6">
+                <!-- Tên tin -->
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Tên tin</label>
+                    <input type="text" id="title" name="title" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" placeholder="Nhập tên tin..." required>
+                </div>
+
+                <!-- Địa điểm/Vị trí -->
+                <div>
+                    <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Địa điểm/Vị trí</label>
+                    <select id="location" name="location" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" required>
+                        <option value="" disabled selected>Chọn địa điểm</option>
+                        <option value="Hà Nội">Hà Nội</option>
+                        <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                        <option value="Đà Nẵng">Đà Nẵng</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+
+                <!-- Ngày thi đấu -->
+                <div>
+                    <label for="match_date" class="block text-sm font-medium text-gray-700 mb-1">Ngày thi đấu</label>
+                    <input type="date" id="match_date" name="match_date" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" required>
+                </div>
+
+                <!-- Trình độ -->
+                <div>
+                    <label for="skill_level" class="block text-sm font-medium text-gray-700 mb-1">Trình độ</label>
+                    <select id="skill_level" name="skill_level" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" required>
+                        <option value="" disabled selected>Chọn trình độ</option>
+                        <option value="Yếu">Yếu</option>
+                        <option value="Trung bình">Trung bình</option>
+                        <option value="Khá">Khá</option>
+                        <option value="Mạnh">Mạnh</option>
+                    </select>
+                </div>
+
+                <!-- Khung giờ -->
+                <div>
+                    <label for="time_frame" class="block text-sm font-medium text-gray-700 mb-1">Khung giờ</label>
+                    <select id="time_frame" name="time_frame" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" required>
+                        <option value="" disabled selected>Chọn khung giờ</option>
+                        <option value="Sáng (7h-12h)">Sáng (7h-12h)</option>
+                        <option value="Chiều (13h-17h)">Chiều (13h-17h)</option>
+                        <option value="Tối (18h-22h)">Tối (18h-22h)</option>
+                    </select>
+                </div>
+
+                <!-- Ghi chú thêm -->
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Ghi chú thêm</label>
+                    <textarea id="notes" name="notes" rows="4" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" placeholder="Nhập ghi chú..."></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-between items-center pt-4">
+                    <button type="reset" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300 ease-in-out">
+                        Xóa bộ lọc
+                    </button>
+                    <button form="post-form" type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center space-x-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        <span>Đăng tin tìm đối thủ</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Script for User Dropdown Menu
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userMenu = document.getElementById('user-menu');
+
+        if (userMenuButton) {
+            userMenuButton.addEventListener('click', () => {
+                userMenu.classList.toggle('hidden');
+            });
+            window.addEventListener('click', (e) => {
+                if (userMenu && !userMenuButton.contains(e.target) && !userMenu.contains(e.target)) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

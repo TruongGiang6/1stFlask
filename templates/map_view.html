@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bản Đồ Sân Bóng - Football Connect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+        #map { 
+            height: 100%;
+        }
+        .field-item:hover {
+            background-color: #f0fdf4; /* green-50 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="{{ url_for('home') }}" class="flex items-center font-bold text-2xl text-green-600">
+                <i class="fa-solid fa-futbol text-green-600 text-4xl mr-2"></i>
+                <span>Football Connect</span>
+            </a>
+            <div class="flex items-center space-x-3">
+                {% if current_user.is_authenticated %}
+                <div class="relative">
+                    <button id="user-menu-button" class="flex items-center bg-gray-100 rounded-xl px-4 py-2 space-x-2 text-left hover:bg-gray-200 focus:outline-none transition">
+                        <i class="fa-regular fa-user-circle text-green-700 text-2xl"></i>
+                        <span class="font-bold text-green-700 text-lg">{{ current_user.username }}</span>
+                        <i class="fa-solid fa-chevron-down text-green-700 text-xs ml-2"></i>
+                    </button>
+                    <div id="user-menu" class="hidden absolute right-0 mt-2 w-full bg-white rounded-md shadow-xl z-50 border border-gray-100">
+                        <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-green-50 transition"><i class="fa-solid fa-address-card w-6 mr-1 text-center"></i><span>Thông tin</span></a>
+                        <a href="{{ url_for('logout') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-green-50 transition"><i class="fa-solid fa-right-from-bracket w-6 mr-1 text-center"></i><span>Đăng xuất</span></a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{{ url_for('home', _anchor='login') }}" class="bg-green-500 text-white font-semibold px-5 py-2 rounded-lg hover:bg-green-600 transition">Đăng nhập</a>
+                <a href="{{ url_for('home', _anchor='register') }}" class="bg-green-500 text-white font-semibold px-5 py-2 rounded-lg hover:bg-blue-600 transition">Đăng ký</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 md:p-6" style="height: calc(100vh - 68px);">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+            
+            <!-- Left Column: Map -->
+            <div class="md:col-span-2 bg-white rounded-lg shadow-md overflow-hidden">
+                <div id="map"></div>
+            </div>
+
+            <!-- Right Column: List of Fields -->
+            <div class="md:col-span-1 bg-white rounded-lg shadow-md p-4 overflow-y-auto">
+                <h2 class="text-xl font-bold text-green-700 mb-4">Danh sách sân bóng</h2>
+                <div id="field-list" class="space-y-2">
+                    <!-- Field items will be injected here by JavaScript -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+    <script>
+        // --- Sample Data for Football Fields ---
+        // Corrected coordinates
+        const footballFields = [
+            { id: 0, name: "Sân bóng Minh Kiệt", lat: 21.0360, lon: 105.7880, address: "Số 1, Cầu Diễn, Nam Từ Liêm" },
+            { id: 1, name: "Sân bóng Thành Phát", lat: 21.0415, lon: 105.7955, address: "Đường Hoàng Quốc Việt kéo dài, Cầu Giấy" },
+            { id: 2, name: "Sân bóng An Khánh", lat: 21.0050, lon: 105.7250, address: "Hoài Đức, Hà Nội" },
+            { id: 3, name: "Sân bóng VSA", lat: 20.9912, lon: 105.8105, address: "112A Lê Trọng Tấn, Thanh Xuân" },
+            { id: 4, name: "Sân bóng C500", lat: 20.9811, lon: 105.7983, address: "Học viện An ninh Nhân dân, Nguyễn Trãi, Hà Đông" },
+            { id: 5, name: "Sân bóng Đại Từ", lat: 20.9758, lon: 105.8352, address: "Khu đô thị Đại Kim, Hoàng Mai" }
+        ];
+
+        // --- Map Initialization ---
+        var map = L.map('map').setView([21.0285, 105.8542], 12); // Start with a wider view
+        const fieldMarkers = []; // To store marker objects
+
+        // Add a tile layer from OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        // --- Populate List and Add Markers ---
+        const fieldListContainer = document.getElementById('field-list');
+
+        const customIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/1177/1177104.png', // Football icon
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        });
+
+        footballFields.forEach(field => {
+            // Add marker to map
+            const marker = L.marker([field.lat, field.lon], { icon: customIcon }).addTo(map);
+            marker.bindPopup(`<b>${field.name}</b><br>${field.address}`);
+            fieldMarkers.push(marker);
+
+            // Add item to list
+            const listItem = document.createElement('div');
+            listItem.className = 'field-item p-3 rounded-lg cursor-pointer border border-gray-200 transition';
+            listItem.innerHTML = `
+                <h3 class="font-semibold text-gray-800">${field.name}</h3>
+                <p class="text-sm text-gray-500">${field.address}</p>
+            `;
+            
+            // Add click event to list item
+            listItem.addEventListener('click', () => {
+                map.setView([field.lat, field.lon], 15); // Zoom in on the selected field
+                marker.openPopup();
+            });
+
+            fieldListContainer.appendChild(listItem);
+        });
+
+        // --- Script for User Dropdown Menu ---
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userMenu = document.getElementById('user-menu');
+
+        if (userMenuButton) {
+            userMenuButton.addEventListener('click', () => {
+                userMenu.classList.toggle('hidden');
+            });
+            window.addEventListener('click', (e) => {
+                if (userMenu && !userMenuButton.contains(e.target) && !userMenu.contains(e.target)) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

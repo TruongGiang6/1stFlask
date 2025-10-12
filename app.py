@@ -43,21 +43,27 @@ def home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
+        login_identity = request.form.get('login_identity')
         password = request.form.get('password')
-        user = User.query.filter_by(username=username, password=password).first()
-        if user:
+        
+        user = User.query.filter((User.username == login_identity) | (User.email == login_identity)).first()
+        
+        if user and user.password == password:
             login_user(user)
             flash('Đăng nhập thành công!', 'success')
             return redirect(url_for('dashboard'))
         else:
-            flash('Sai tên đăng nhập hoặc mật khẩu!', 'error')
-    last_username = session.pop('last_username', '')
-    return render_template('login.html', last_username=last_username)
+            flash('Sai thông tin đăng nhập hoặc mật khẩu!', 'error')
+            session['last_username'] = login_identity # Giữ lại thông tin đã nhập
+            return redirect(url_for('home', _anchor='login'))
+            
+    # Nếu là GET request, chuyển về trang chủ và mở modal
+    return redirect(url_for('home', _anchor='login'))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        # ... (xử lý đăng ký)
         username = request.form.get('username')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
@@ -76,7 +82,12 @@ def register():
             db.session.commit()
             flash('Đăng ký thành công! Hãy đăng nhập!', 'success')
             session['last_username'] = username
-            return redirect(url_for('login'))
+            return redirect(url_for('home', _anchor='login')) # Chuyển hướng về home và mở modal login
+        
+        # Nếu đăng ký lỗi, quay lại trang chủ và mở lại modal đăng ký
+        return redirect(url_for('home', _anchor='register'))
+
+    # Nếu là GET request, chỉ hiển thị trang
     return render_template('register.html')
 
 @app.route('/dashboard')
@@ -91,6 +102,35 @@ def logout():
     logout_user()
     flash("Bạn đã đăng xuất!", 'success')
     return redirect(url_for('login'))
+
+@app.route('/find_opponent', methods=['GET', 'POST'])
+@login_required
+def find_opponent():
+    if request.method == 'POST':
+        # Xử lý dữ liệu form ở đây
+        title = request.form.get('title')
+        location = request.form.get('location')
+        match_date = request.form.get('match_date')
+        skill_level = request.form.get('skill_level')
+        time_frame = request.form.get('time_frame')
+        notes = request.form.get('notes')
+        
+        # (Bạn có thể thêm logic để lưu tin đăng vào database ở đây)
+        
+        flash(f'Đã đăng tin "{title}" thành công!', 'success')
+        return redirect(url_for('find_opponent')) # Hoặc chuyển đến trang danh sách tin đăng
+
+    return render_template('find_opponent.html')
+
+@app.route('/find_match')
+@login_required
+def find_match():
+    return render_template('find_match.html')
+
+@app.route('/map')
+@login_required
+def map_view():
+    return render_template('map_view.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
