@@ -70,30 +70,21 @@
 </head>
 <body>
     <div class="form-container">
-        <!-- Logo và Tên thương hiệu -->
-        <div class="logo-text brand-color">
-            <span>⚽</span> Football Connect
-        </div>
 
         <h2 class="text-2xl font-bold text-center mb-6 brand-color">Đăng Nhập Tài Khoản</h2>
 
         <form>
-            <div class="mb-4">
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email hoặc Tên đăng nhập</label>
-                <input type="email" id="email" name="email" class="input-field" placeholder="Nhập email của bạn" required>
-            </div>
-            
-            <div class="mb-6">
-                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
-                <input type="password" id="password" name="password" class="input-field" placeholder="Nhập mật khẩu" required>
-            </div>
-            
-            <button type="submit" class="submit-btn brand-bg text-white w-full">Đăng Nhập</button>
-        </form>
-
-        <div class="mt-4 text-center">
-            <a href="#" class="text-sm brand-color hover:underline">Quên mật khẩu?</a>
-        </div>
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="mb-4">
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Tên đăng nhập</label>
+                    <input type="text" id="username" name="username" class="input-field" placeholder="Nhập tên đăng nhập" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+                    <input type="password" id="password" name="password" class="input-field" placeholder="Nhập mật khẩu" required>
+                </div>
+                <button type="submit" class="submit-btn brand-bg text-white w-full">Đăng Nhập</button>
+            </form>
         
         <div class="mt-6 text-center text-sm text-gray-600">
             Chưa có tài khoản? 
