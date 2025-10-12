@@ -1,196 +1,208 @@
-<html lang="en">
+<!DOCTYPE html>
+<html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Football Connect - Connect Football Professionals with Dream Clubs</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f5f7fa; color: #222; }
-    header { background: #0a7c3a; color: #fff; padding: 20px 0; text-align: center; }
-    .logo { font-size: 1.5em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    nav { margin-top: 10px; }
-    nav a { color: #fff; margin: 0 10px; text-decoration: none; font-weight: 500; }
-    .hero { background: linear-gradient(180deg, #0a7c3a 0%, #43e97b 100%); color: #fff; padding: 60px 20px 40px 20px; text-align: center; }
-    .hero h1 { font-size: 2.2em; margin-bottom: 10px; }
-    .hero p { font-size: 1.2em; margin-bottom: 30px; }
-    .hero .cta { margin-bottom: 30px; }
-    .hero button, .hero .watch-demo { background: #fff; color: #0a7c3a; border: none; padding: 12px 28px; border-radius: 6px; font-size: 1em; margin: 0 8px; cursor: pointer; font-weight: bold; }
-    .hero .watch-demo { background: transparent; color: #fff; border: 2px solid #fff; }
-    .stats { display: flex; justify-content: center; gap: 30px; margin: 30px 0; flex-wrap: wrap; }
-    .stat { background: #fff; border-radius: 10px; padding: 20px 30px; box-shadow: 0 2px 8px #0001; min-width: 160px; text-align: center; }
-    .stat h2 { color: #0a7c3a; margin: 0; font-size: 2em; }
-    .stat p { margin: 8px 0 0 0; font-size: 1em; }
-    .section { background: #fff; margin: 30px auto; max-width: 900px; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 40px 20px; }
-    .section h2 { text-align: center; color: #0a7c3a; margin-bottom: 30px; }
-    .steps { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; }
-    .step { flex: 1 1 200px; text-align: center; }
-    .step h3 { color: #0a7c3a; }
-    .profiles { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; margin-top: 30px; }
-    .profile { background: #f5f7fa; border-radius: 8px; padding: 20px; flex: 1 1 180px; text-align: center; }
-    .profile h4 { color: #0a7c3a; }
-    .features { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 30px; }
-    .feature { background: #f5f7fa; border-radius: 8px; padding: 18px; flex: 1 1 180px; text-align: center; }
-    .feature h5 { color: #0a7c3a; }
-    .success-stories { display: flex; gap: 20px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
-    .story { background: #f5f7fa; border-radius: 8px; padding: 18px; flex: 1 1 220px; }
-    .footer { background: #111c1a; color: #fff; text-align: center; padding: 30px 10px 10px 10px; margin-top: 40px; }
-    .footer-logo { font-size: 2em; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
-    .footer-links { margin-bottom: 10px; }
-    .footer-links a { color: #fff; margin: 0 8px; text-decoration: none; }
-    @media (max-width: 900px) {
-      .stats, .steps, .profiles, .features, .success-stories { flex-direction: column; align-items: center; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Connect</title>
+    <!-- Tích hợp Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome cho icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .hero-section {
+            background-color: #28a745;
+            background-image: linear-gradient(135deg, #28a745 0%, #218838 100%);
+        }
+        .frosted-glass {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
 </head>
-<body>
-  <header>
-    <div class="logo">
-      <span>⚽</span> Football Connect
-    </div>
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">How it Works</a>
-      <a href="#">Features</a>
-      <a href="#">Success Stories</a>
-      <a href="#">Contact</a>
-      <a href="#" style="background:#fff; color:#0a7c3a; border-radius:5px; padding:6px 14px; margin-left:20px;">Đăng nhập/Đăng ký</a>
+<body class="text-gray-800">
+
+    <!-- Phần Header và Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#" class="font-bold text-2xl text-green-600">Football Connect</a>
+            <div class="hidden md:flex items-center space-x-6 text-gray-600">
+                <a href="#" class="hover:text-green-600 transition">Kết nối</a>
+                <a href="#" class="hover:text-green-600 transition">Đam mê</a>
+                <a href="#" class="hover:text-green-600 transition">Tỏa sáng</a>
+            </div>
+            <a href="#" class="bg-green-500 text-white font-semibold px-5 py-2 rounded-lg hover:bg-green-600 transition">
+                Đăng nhập
+            </a>
+        </div>
     </nav>
-  </header>
-  <div class="hero">
-    <h1>Connect Football Professionals<br>with Dream Clubs</h1>
-    <p>Find your next opportunity, connect with top clubs, and grow your football career.</p>
-    <div class="cta">
-      <button>Get Started Today</button>
-      <button class="watch-demo">Watch Demo</button>
-    </div>
-    <div class="stats">
-      <div class="stat">
-        <h2>10,000+</h2>
-        <p>Professionals</p>
-      </div>
-      <div class="stat">
-        <h2>5,000+</h2>
-        <p>Clubs</p>
-      </div>
-      <div class="stat">
-        <h2>1,000+</h2>
-        <p>Opportunities</p>
-      </div>
-      <div class="stat">
-        <h2>500+</h2>
-        <p>Success Stories</p>
-      </div>
-    </div>
-  </div>
-  <div class="section">
-    <h2>How FootballCareers Works</h2>
-    <div class="steps">
-      <div class="step">
-        <h3>1. Create Your Profile</h3>
-        <p>Showcase your skills, experience, and achievements to stand out to clubs and agents.</p>
-      </div>
-      <div class="step">
-        <h3>2. Discover Opportunities</h3>
-        <p>Browse and apply for jobs, trials, and contracts that match your ambitions.</p>
-      </div>
-      <div class="step">
-        <h3>3. Make Connections</h3>
-        <p>Network with clubs, coaches, and agents to unlock new career possibilities.</p>
-      </div>
-    </div>
-  </div>
-  <div class="section">
-    <h2>Built for Every Football Professional</h2>
-    <div class="profiles">
-      <div class="profile">
-        <h4>Clubs</h4>
-        <p>Find top talent and manage your recruitment process efficiently.</p>
-      </div>
-      <div class="profile">
-        <h4>Players</h4>
-        <p>Showcase your profile and get discovered by leading clubs worldwide.</p>
-      </div>
-      <div class="profile">
-        <h4>Coaches</h4>
-        <p>Connect with clubs and take your coaching career to the next level.</p>
-      </div>
-      <div class="profile">
-        <h4>Agents</h4>
-        <p>Expand your network and help your clients achieve their dreams.</p>
-      </div>
-    </div>
-    <div style="text-align:center; margin-top:20px;">
-      <button>See more</button>
-    </div>
-  </div>
-  <div class="section">
-    <h2>Powerful Features for Football Professionals</h2>
-    <div class="features">
-      <div class="feature">
-        <h5>Video Profiles</h5>
-        <p>Upload highlight reels and match footage to impress recruiters.</p>
-      </div>
-      <div class="feature">
-        <h5>Performance Analytics</h5>
-        <p>Track your stats and progress with advanced analytics tools.</p>
-      </div>
-      <div class="feature">
-        <h5>Global Network</h5>
-        <p>Connect with professionals and clubs from around the world.</p>
-      </div>
-      <div class="feature">
-        <h5>Verified Profiles</h5>
-        <p>Build trust with verified credentials and endorsements.</p>
-      </div>
-      <div class="feature">
-        <h5>Direct Messages</h5>
-        <p>Communicate securely with clubs, agents, and other professionals.</p>
-      </div>
-      <div class="feature">
-        <h5>Email Management</h5>
-        <p>Stay organized with integrated email and notifications.</p>
-      </div>
-      <div class="feature">
-        <h5>Learning Hub</h5>
-        <p>Access resources and courses to develop your football career.</p>
-      </div>
-    </div>
-  </div>
-  <div class="section">
-    <h2>Success Stories</h2>
-    <div class="success-stories">
-      <div class="story">
-        <strong>Nguyen Anh Tuan</strong><br>
-        <em>Player</em><br>
-        "I found my dream club through Football Connect. The process was smooth and professional!"
-      </div>
-      <div class="story">
-        <strong>Le Thi Hoa</strong><br>
-        <em>Coach</em><br>
-        "Connecting with clubs and players has never been easier. Highly recommended!"
-      </div>
-      <div class="story">
-        <strong>Tran Van Minh</strong><br>
-        <em>Agent</em><br>
-        "A must-have platform for anyone serious about football careers."
-      </div>
-    </div>
-  </div>
-  <div class="hero" style="background: linear-gradient(180deg, #43e97b 0%, #0a7c3a 100%); margin-top:40px;">
-    <h2>Ready to Take Your Football Career to the Next Level?</h2>
-    <button>Create Your Profile</button>
-    <button class="watch-demo">Contact Sales</button>
-    <div style="margin-top:20px; color:#fff; font-size:0.95em;">
-      <span>© 2025 Football Connect</span> &nbsp;|&nbsp; <a href="#" style="color:#fff; text-decoration:underline;">Terms</a> &nbsp;|&nbsp; <a href="#" style="color:#fff; text-decoration:underline;">Contact</a>
-    </div>
-  </div>
-  <footer class="footer">
-    <div class="footer-logo">
-      <span>⚽</span> Football Connect
-    </div>
-    <div class="footer-links">
-      <a href="#">Home</a> | <a href="#">About</a> | <a href="#">Careers</a> | <a href="#">Contact</a>
-    </div>
-    <div style="font-size:0.9em; color:#aaa;">© 2025 Football Connect. All rights reserved.</div>
-  </footer>
+
+    <!-- Hero Section -->
+    <header class="hero-section text-white text-center py-20 px-6">
+        <h1 class="text-4xl md:text-6xl font-extrabold leading-tight">Football Connect</h1>
+        <p class="mt-4 text-lg md:text-xl opacity-90">Kết nối - Giao lưu - Tỏa sáng cùng đam mê bóng đá</p>
+        <button class="mt-8 bg-white text-green-600 font-bold py-3 px-8 rounded-full shadow-lg hover:bg-gray-200 transition transform hover:scale-105">
+            <i class="fa-solid fa-rocket mr-2"></i> Get Started Today
+        </button>
+        <div class="container mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-16 max-w-4xl">
+            <div class="frosted-glass p-6 rounded-2xl flex flex-col items-center hover:bg-white/30 transition cursor-pointer">
+                <i class="fa-solid fa-handshake-simple text-3xl mb-3"></i>
+                <span class="font-semibold">Tìm đội bắt cặp đấu</span>
+            </div>
+            <div class="frosted-glass p-6 rounded-2xl flex flex-col items-center hover:bg-white/30 transition cursor-pointer">
+                <i class="fa-solid fa-bullhorn text-3xl mb-3"></i>
+                <span class="font-semibold">Đăng tin tìm đối thủ</span>
+            </div>
+            <div class="frosted-glass p-6 rounded-2xl flex flex-col items-center hover:bg-white/30 transition cursor-pointer">
+                <i class="fa-solid fa-magnifying-glass text-3xl mb-3"></i>
+                <span class="font-semibold">Tìm kiếm sân bóng</span>
+            </div>
+            <div class="frosted-glass p-6 rounded-2xl flex flex-col items-center hover:bg-white/30 transition cursor-pointer">
+                <i class="fa-solid fa-user-plus text-3xl mb-3"></i>
+                <span class="font-semibold">Tuyển thành viên</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-16">
+        <!-- Các hoạt động -->
+        <section class="text-center">
+            <h2 class="text-3xl font-bold mb-2">Các hoạt động của Football Connect</h2>
+            <p class="text-gray-600 max-w-3xl mx-auto">Nền tảng của chúng tôi tạo cơ hội kết nối cộng đồng bóng đá, giúp các đội tìm đối thủ, sân đấu, và các chức năng quản lý khác.</p>
+            <div class="grid md:grid-cols-3 gap-8 mt-12 text-left">
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow border border-gray-100">
+                    <i class="fa-solid fa-users text-3xl text-green-500 mb-4"></i>
+                    <h3 class="font-bold text-xl mb-2">Đồng đội</h3>
+                    <p class="text-gray-600">Hãy cùng đồng đội tham gia và cạnh tranh với những người có chung đam mê, xây dựng một đội bóng vững mạnh thế hệ mới.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow border border-gray-100">
+                    <i class="fa-solid fa-search text-3xl text-green-500 mb-4"></i>
+                    <h3 class="font-bold text-xl mb-2">Tìm kiếm đội bóng</h3>
+                    <p class="text-gray-600">Dễ dàng tìm kiếm và kết nối với các đội bóng cho mình, hoặc mời những người khác tham gia vào đội của bạn để đấu giao hữu.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow border border-gray-100">
+                    <i class="fa-solid fa-heart text-3xl text-green-500 mb-4"></i>
+                    <h3 class="font-bold text-xl mb-2">Đam mê, yêu thích bóng đá</h3>
+                    <p class="text-gray-600">Cơ hội kết nối, chia sẻ kinh nghiệm và học hỏi, giao lưu với những người bạn trong giới bóng đá.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Các tính năng mạnh mẽ -->
+        <section class="text-center mt-24">
+            <h2 class="text-3xl font-bold mb-2">Các tính năng mạnh mẽ</h2>
+            <p class="text-gray-600 max-w-3xl mx-auto">Mọi thành phần đều phát triển từ người dùng bóng đá cá nhân.</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mt-12">
+                <!-- Các item tính năng -->
+                <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow text-center">
+                    <i class="fa-solid fa-video text-3xl text-green-500 mb-3"></i>
+                    <h4 class="font-semibold text-lg">Hồ sơ video</h4>
+                    <p class="text-gray-500 text-sm mt-1">Chia sẻ video và khoảnh khắc nổi bật trên tường cá nhân của bạn với cộng đồng.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow text-center">
+                    <i class="fa-solid fa-chart-line text-3xl text-green-500 mb-3"></i>
+                    <h4 class="font-semibold text-lg">Phân tích hiệu suất</h4>
+                    <p class="text-gray-500 text-sm mt-1">Theo dõi, phân tích hiệu quả thi đấu của bạn qua từng trận.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow text-center">
+                    <i class="fa-solid fa-globe text-3xl text-green-500 mb-3"></i>
+                    <h4 class="font-semibold text-lg">Mạng lưới rộng</h4>
+                    <p class="text-gray-500 text-sm mt-1">Kết nối với các cầu thủ (cả Pro) trên toàn quốc, mở rộng mối quan hệ.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow text-center">
+                    <i class="fa-solid fa-mobile-alt text-3xl text-green-500 mb-3"></i>
+                    <h4 class="font-semibold text-lg">Di động</h4>
+                    <p class="text-gray-500 text-sm mt-1">Quản lý đội bóng và sự nghiệp của bạn mọi lúc, mọi nơi trên thiết bị di động.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow text-center">
+                    <i class="fa-solid fa-user-circle text-3xl text-green-500 mb-3"></i>
+                    <h4 class="font-semibold text-lg">Hồ sơ cá nhân</h4>
+                    <p class="text-gray-500 text-sm mt-1">Xây dựng hồ sơ chuyên nghiệp, thể hiện kỹ năng và thành tích của bạn.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow text-center">
+                    <i class="fa-solid fa-comments text-3xl text-green-500 mb-3"></i>
+                    <h4 class="font-semibold text-lg">Nhắn tin trực tiếp</h4>
+                    <p class="text-gray-500 text-sm mt-1">Liên hệ, trò chuyện với các cá nhân, đội bóng và ban tổ chức.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow text-center">
+                    <i class="fa-solid fa-shield-halved text-3xl text-green-500 mb-3"></i>
+                    <h4 class="font-semibold text-lg">Quản lý đội bóng</h4>
+                    <p class="text-gray-500 text-sm mt-1">Tổ chức, quản lý đội bóng, lịch thi đấu, thành viên một cách dễ dàng.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow text-center">
+                    <i class="fa-solid fa-hands-helping text-3xl text-green-500 mb-3"></i>
+                    <h4 class="font-semibold text-lg">Trung tâm hợp tác</h4>
+                    <p class="text-gray-500 text-sm mt-1">Kết nối và tìm các buổi hợp tác, giao lưu giữa các đội bóng.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Call to Action Section -->
+    <section class="bg-green-600 text-white">
+        <div class="container mx-auto px-6 py-12 text-center">
+            <h2 class="text-3xl font-bold">Bạn có thật sự yêu thích bóng đá?</h2>
+            <div class="mt-8 flex flex-wrap justify-center gap-4">
+                <button class="bg-white text-green-600 font-bold py-3 px-6 rounded-lg hover:bg-gray-200 transition">
+                    <i class="fa-solid fa-user-plus mr-2"></i> Tạo hồ sơ cầu thủ
+                </button>
+                <button class="bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-900 transition">
+                    <i class="fa-solid fa-headset mr-2"></i> Liên hệ hỗ trợ
+                </button>
+            </div>
+            <div class="mt-6 text-sm opacity-80 flex justify-center items-center gap-4">
+                <span><i class="fa-solid fa-check mr-1"></i> Miễn phí tham gia</span>
+                <span><i class="fa-solid fa-check mr-1"></i> Không phát sinh chi phí</span>
+                <span><i class="fa-solid fa-check mr-1"></i> Chỉ xây dựng bởi cộng đồng</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="container mx-auto px-6 py-12 grid md:grid-cols-4 gap-8">
+            <div class="md:col-span-1">
+                <h3 class="font-bold text-2xl">Football Connect</h3>
+                <p class="mt-2 text-gray-400 text-sm">Nền tảng kết nối cộng đồng bóng đá hàng đầu.</p>
+            </div>
+            <div>
+                <h4 class="font-semibold">Bóng đá & Cộng đồng</h4>
+                <ul class="mt-4 space-y-2 text-gray-400">
+                    <li><a href="#" class="hover:text-white">Kết nối đội bóng</a></li>
+                    <li><a href="#" class="hover:text-white">Tìm đối thủ</a></li>
+                    <li><a href="#" class="hover:text-white">Tuyển thành viên</a></li>
+                </ul>
+            </div>
+             <div>
+                <h4 class="font-semibold">Dành cho đối tác</h4>
+                <ul class="mt-4 space-y-2 text-gray-400">
+                    <li><a href="#" class="hover:text-white">Hồ sơ cầu thủ</a></li>
+                    <li><a href="#" class="hover:text-white">Hồ sơ đội bóng</a></li>
+                    <li><a href="#" class="hover:text-white">Thành tích</a></li>
+                </ul>
+            </div>
+             <div>
+                <h4 class="font-semibold">Công ty</h4>
+                <ul class="mt-4 space-y-2 text-gray-400">
+                    <li><a href="#" class="hover:text-white">Giới thiệu</a></li>
+                    <li><a href="#" class="hover:text-white">Liên hệ</a></li>
+                    <li><a href="#" class="hover:text-white">Chính sách</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="bg-black text-center py-4 text-gray-500 text-sm">
+            <p>&copy; 2025 Football Connect. Tái bản có bản quyền.</p>
+        </div>
+    </footer>
+
 </body>
 </html>
+
