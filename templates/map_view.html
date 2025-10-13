@@ -3,29 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bản Đồ Sân Bóng - Football Connect</title>
+    <title>Tìm Sân Bóng - Football Connect</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
-
     <style>
         body {
             font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: #f8f9fa;
         }
-        #map { 
+        #map {
             height: 100%;
+            width: 100%;
+            border-radius: 0.5rem;
         }
-        .field-item:hover {
-            background-color: #f0fdf4; /* green-50 */
+        .leaflet-popup-content-wrapper {
+            border-radius: 0.5rem;
+        }
+        .leaflet-popup-content {
+            margin: 13px 20px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .leaflet-popup-content h3 {
+            font-weight: 700;
+            color: #166534; /* green-700 */
+            margin-bottom: 5px;
         }
     </style>
 </head>
-<body class="bg-gray-100">
+<body>
 
     <!-- Navigation Bar -->
     <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
@@ -56,86 +65,46 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="container mx-auto p-4 md:p-6" style="height: calc(100vh - 68px);">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
-            
-            <!-- Left Column: Map -->
-            <div class="md:col-span-2 bg-white rounded-lg shadow-md overflow-hidden">
-                <div id="map"></div>
-            </div>
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 class="text-3xl font-bold text-center text-green-700 mb-8">Tìm sân bóng</h1>
 
-            <!-- Right Column: List of Fields -->
-            <div class="md:col-span-1 bg-white rounded-lg shadow-md p-4 overflow-y-auto">
-                <h2 class="text-xl font-bold text-green-700 mb-4">Danh sách sân bóng</h2>
-                <div id="field-list" class="space-y-2">
-                    <!-- Field items will be injected here by JavaScript -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column: Filters and Results -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md h-fit">
+                <div class="mb-6">
+                    <label for="khu-vuc" class="block text-lg font-bold text-gray-800">Chọn khu vực</label>
+                    <p class="text-sm text-gray-500 mb-2">Bản đồ sẽ tự động cập nhật theo lựa chọn của bạn.</p>
+                    <select id="khu-vuc" class="mt-1 block w-full p-3 border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 text-base">
+                        <option>Tất cả</option>
+                        <option>Ba Đình</option>
+                        <option>Hoàn Kiếm</option>
+                        <option>Đống Đa</option>
+                        <option>Cầu Giấy</option>
+                        <option>Hai Bà Trưng</option>
+                        <option>Thanh Xuân</option>
+                        <option>Hà Đông</option>
+                        <option>Long Biên</option>
+                        <option>Tây Hồ</option>
+                        <option>Hoàng Mai</option>
+                        <option>Nam Từ Liêm</option>
+                        <option>Bắc Từ Liêm</option>
+                    </select>
+                </div>
+                <h2 class="text-xl font-bold text-green-700 mb-4">Các sân trong khu vực</h2>
+                <div id="results-list" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    <!-- Results will be populated by JavaScript -->
                 </div>
             </div>
 
+            <!-- Right Column: Map -->
+            <div class="lg:col-span-2 rounded-lg shadow-md overflow-hidden h-[80vh]">
+                <div id="map"></div>
+            </div>
         </div>
     </main>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
-
     <script>
-        // --- Sample Data for Football Fields ---
-        // Corrected coordinates
-        const footballFields = [
-            { id: 0, name: "Sân bóng Minh Kiệt", lat: 21.0360, lon: 105.7880, address: "Số 1, Cầu Diễn, Nam Từ Liêm" },
-            { id: 1, name: "Sân bóng Thành Phát", lat: 21.0415, lon: 105.7955, address: "Đường Hoàng Quốc Việt kéo dài, Cầu Giấy" },
-            { id: 2, name: "Sân bóng An Khánh", lat: 21.0050, lon: 105.7250, address: "Hoài Đức, Hà Nội" },
-            { id: 3, name: "Sân bóng VSA", lat: 20.9912, lon: 105.8105, address: "112A Lê Trọng Tấn, Thanh Xuân" },
-            { id: 4, name: "Sân bóng C500", lat: 20.9811, lon: 105.7983, address: "Học viện An ninh Nhân dân, Nguyễn Trãi, Hà Đông" },
-            { id: 5, name: "Sân bóng Đại Từ", lat: 20.9758, lon: 105.8352, address: "Khu đô thị Đại Kim, Hoàng Mai" }
-        ];
-
-        // --- Map Initialization ---
-        var map = L.map('map').setView([21.0285, 105.8542], 12); // Start with a wider view
-        const fieldMarkers = []; // To store marker objects
-
-        // Add a tile layer from OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-
-        // --- Populate List and Add Markers ---
-        const fieldListContainer = document.getElementById('field-list');
-
-        const customIcon = L.icon({
-            iconUrl: 'https://cdn-icons-png.flaticon.com/512/1177/1177104.png', // Football icon
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-            popupAnchor: [0, -32]
-        });
-
-        footballFields.forEach(field => {
-            // Add marker to map
-            const marker = L.marker([field.lat, field.lon], { icon: customIcon }).addTo(map);
-            marker.bindPopup(`<b>${field.name}</b><br>${field.address}`);
-            fieldMarkers.push(marker);
-
-            // Add item to list
-            const listItem = document.createElement('div');
-            listItem.className = 'field-item p-3 rounded-lg cursor-pointer border border-gray-200 transition';
-            listItem.innerHTML = `
-                <h3 class="font-semibold text-gray-800">${field.name}</h3>
-                <p class="text-sm text-gray-500">${field.address}</p>
-            `;
-            
-            // Add click event to list item
-            listItem.addEventListener('click', () => {
-                map.setView([field.lat, field.lon], 15); // Zoom in on the selected field
-                marker.openPopup();
-            });
-
-            fieldListContainer.appendChild(listItem);
-        });
-
-        // --- Script for User Dropdown Menu ---
+        // Script for User Dropdown Menu
         const userMenuButton = document.getElementById('user-menu-button');
         const userMenu = document.getElementById('user-menu');
 
@@ -149,7 +118,95 @@
                 }
             });
         }
+
+        // --- Map and Filtering Logic ---
+
+        // 1. Data for pitches and districts
+        const pitches = {
+            "Sân Mỹ Đình": { lat: 21.0288, lng: 105.7611, khuVuc: "Nam Từ Liêm", loaiSan: "Sân 11 người", gia: "1,200,000 VNĐ", sdt: "0912345678" },
+            "Sân Cầu Giấy": { lat: 21.0310, lng: 105.7930, khuVuc: "Cầu Giấy", loaiSan: "Sân 7 người", gia: "650,000 VNĐ", sdt: "0987654321" },
+            "Sân Hoàng Mai": { lat: 20.9800, lng: 105.8450, khuVuc: "Hoàng Mai", loaiSan: "Sân 7 người", gia: "500,000 VNĐ", sdt: "0911223344" },
+            "Sân Tây Hồ": { lat: 21.0700, lng: 105.8220, khuVuc: "Tây Hồ", loaiSan: "Sân 7 người", gia: "600,000 VNĐ", sdt: "0955667788" },
+            "Sân VSA": { lat: 20.9950, lng: 105.8150, khuVuc: "Thanh Xuân", loaiSan: "Sân 7 người", gia: "700,000 VNĐ", sdt: "0944556677" },
+            "Sân Bách Khoa": { lat: 21.0050, lng: 105.8440, khuVuc: "Hai Bà Trưng", loaiSan: "Sân 11 người", gia: "1,000,000 VNĐ", sdt: "0933445566" },
+            "Sân Long Biên": { lat: 21.0400, lng: 105.8800, khuVuc: "Long Biên", loaiSan: "Sân 7 người", gia: "550,000 VNĐ", sdt: "0922334455" }
+        };
+
+        const districtCoordinates = {
+            "Tất cả": { lat: 21.0278, lng: 105.8342, zoom: 12 },
+            "Ba Đình": { lat: 21.0362, lng: 105.8220, zoom: 14 },
+            "Hoàn Kiếm": { lat: 21.0287, lng: 105.8502, zoom: 15 },
+            "Đống Đa": { lat: 21.0165, lng: 105.8295, zoom: 14 },
+            "Cầu Giấy": { lat: 21.0310, lng: 105.7930, zoom: 14 },
+            "Hai Bà Trưng": { lat: 21.0050, lng: 105.8440, zoom: 14 },
+            "Thanh Xuân": { lat: 20.9950, lng: 105.8150, zoom: 14 },
+            "Hà Đông": { lat: 20.9675, lng: 105.7700, zoom: 13 },
+            "Long Biên": { lat: 21.0400, lng: 105.8800, zoom: 14 },
+            "Tây Hồ": { lat: 21.0700, lng: 105.8220, zoom: 14 },
+            "Hoàng Mai": { lat: 20.9800, lng: 105.8450, zoom: 14 },
+            "Nam Từ Liêm": { lat: 21.0288, lng: 105.7611, zoom: 14 },
+            "Bắc Từ Liêm": { lat: 21.0600, lng: 105.7600, zoom: 14 }
+        };
+
+        // 2. Initialize Map
+        const map = L.map('map').setView([21.0278, 105.8342], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        const markers = L.layerGroup().addTo(map);
+
+        // 3. DOM Elements
+        const khuVucSelect = document.getElementById('khu-vuc');
+        const resultsList = document.getElementById('results-list');
+
+        // 4. Functions
+        function updateMapAndList() {
+            const selectedKhuVuc = khuVucSelect.value;
+            
+            // Clear previous markers and list
+            markers.clearLayers();
+            resultsList.innerHTML = '';
+
+            // Center map on the selected district
+            const district = districtCoordinates[selectedKhuVuc];
+            if (district) {
+                map.setView([district.lat, district.lng], district.zoom);
+            }
+
+            // Filter and display pitches
+            Object.entries(pitches).forEach(([name, data]) => {
+                if (selectedKhuVuc === 'Tất cả' || data.khuVuc === selectedKhuVuc) {
+                    // Add marker to map
+                    const marker = L.marker([data.lat, data.lng]).addTo(markers);
+                    marker.bindPopup(`<h3>${name}</h3><p><b>Khu vực:</b> ${data.khuVuc}<br><b>Loại sân:</b> ${data.loaiSan}<br><b>Giá:</b> ${data.gia}<br><b>SĐT:</b> ${data.sdt}</p>`);
+
+                    // Add item to list
+                    const listItem = document.createElement('div');
+                    listItem.className = 'p-3 bg-gray-50 rounded-md shadow-sm cursor-pointer hover:bg-green-100 hover:shadow-md transition';
+                    listItem.innerHTML = `
+                        <h3 class="font-bold text-green-700">${name}</h3>
+                        <p class="text-sm text-gray-600">${data.khuVuc} | ${data.loaiSan}</p>
+                        <p class="text-sm font-semibold text-gray-800">Giá: ${data.gia}</p>
+                    `;
+                    listItem.addEventListener('click', () => {
+                        map.setView([data.lat, data.lng], 16);
+                        marker.openPopup();
+                    });
+                    resultsList.appendChild(listItem);
+                }
+            });
+        }
+
+        // 5. Event Listeners
+        khuVucSelect.addEventListener('change', updateMapAndList);
+
+        // Initial load
+        window.addEventListener('load', updateMapAndList);
+
     </script>
 
 </body>
 </html>
+

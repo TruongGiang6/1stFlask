@@ -45,78 +45,120 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-6 py-8">
-        <div class="mb-6">
-            <!-- The button previously here has been moved to the bottom of the form -->
-        </div>
-        <!-- Post Creation Form -->
-        <div class="bg-white p-8 rounded-2xl shadow-lg max-w-3xl mx-auto">
-            <form id="post-form" action="{{ url_for('find_opponent') }}" method="POST" class="space-y-6">
-                <!-- Tên tin -->
-                <div>
-                    <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Tên tin</label>
-                    <input type="text" id="title" name="title" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" placeholder="Nhập tên tin..." required>
-                </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Post Creation Form -->
+            <div class="bg-white p-8 rounded-2xl shadow-lg">
+                <h1 class="text-2xl font-bold text-green-700 mb-6">Tạo tin tìm đối thủ</h1>
+                <form id="post-form" action="{{ url_for('find_opponent') }}" method="POST" class="space-y-6">
+                    <!-- Tên tin -->
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Tên tin</label>
+                        <input type="text" id="title" name="title" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-2" placeholder="Ví dụ: FC Anh Em cần tìm đối thủ..." required>
+                    </div>
 
-                <!-- Địa điểm/Vị trí -->
-                <div>
-                    <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Địa điểm/Vị trí</label>
-                    <select id="location" name="location" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" required>
-                        <option value="" disabled selected>Chọn địa điểm</option>
-                        <option value="Hà Nội">Hà Nội</option>
-                        <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
-                        <option value="Đà Nẵng">Đà Nẵng</option>
-                        <option value="Khác">Khác</option>
-                    </select>
-                </div>
+                    <!-- Địa điểm/Vị trí -->
+                    <div>
+                        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Khu vực</label>
+                        <select id="location" name="location" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-2" required>
+                            <option value="" disabled selected>Chọn khu vực</option>
+                            <option>Cầu Giấy</option>
+                            <option>Thanh Xuân</option>
+                            <option>Hà Đông</option>
+                            <option>Hai Bà Trưng</option>
+                            <option>Hoàng Mai</option>
+                            <option>Nam Từ Liêm</option>
+                            <option>Bắc Từ Liêm</option>
+                            <option>Đống Đa</option>
+                        </select>
+                    </div>
 
-                <!-- Ngày thi đấu -->
-                <div>
-                    <label for="match_date" class="block text-sm font-medium text-gray-700 mb-1">Ngày thi đấu</label>
-                    <input type="date" id="match_date" name="match_date" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" required>
-                </div>
+                    <!-- Sân bóng -->
+                    <div>
+                        <label for="pitch" class="block text-sm font-medium text-gray-700 mb-1">Sân bóng</label>
+                        <input type="text" id="pitch" name="pitch" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-2" placeholder="Ví dụ: Sân bóng Minh Kiệt" required>
+                    </div>
 
-                <!-- Trình độ -->
-                <div>
-                    <label for="skill_level" class="block text-sm font-medium text-gray-700 mb-1">Trình độ</label>
-                    <select id="skill_level" name="skill_level" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" required>
-                        <option value="" disabled selected>Chọn trình độ</option>
-                        <option value="Yếu">Yếu</option>
-                        <option value="Trung bình">Trung bình</option>
-                        <option value="Khá">Khá</option>
-                        <option value="Mạnh">Mạnh</option>
-                    </select>
-                </div>
+                    <!-- Ngày thi đấu -->
+                    <div>
+                        <label for="match_date" class="block text-sm font-medium text-gray-700 mb-1">Ngày thi đấu</label>
+                        <input type="date" id="match_date" name="match_date" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-2" required>
+                    </div>
 
-                <!-- Khung giờ -->
-                <div>
-                    <label for="time_frame" class="block text-sm font-medium text-gray-700 mb-1">Khung giờ</label>
-                    <select id="time_frame" name="time_frame" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" required>
-                        <option value="" disabled selected>Chọn khung giờ</option>
-                        <option value="Sáng (7h-12h)">Sáng (7h-12h)</option>
-                        <option value="Chiều (13h-17h)">Chiều (13h-17h)</option>
-                        <option value="Tối (18h-22h)">Tối (18h-22h)</option>
-                    </select>
-                </div>
+                    <!-- Trình độ -->
+                    <div>
+                        <label for="skill_level" class="block text-sm font-medium text-gray-700 mb-1">Trình độ</label>
+                        <select id="skill_level" name="skill_level" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-2" required>
+                            <option value="" disabled selected>Chọn trình độ</option>
+                            <option>Yếu</option>
+                            <option>Trung bình</option>
+                            <option>Khá</option>
+                            <option>Mạnh</option>
+                        </select>
+                    </div>
 
-                <!-- Ghi chú thêm -->
-                <div>
-                    <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Ghi chú thêm</label>
-                    <textarea id="notes" name="notes" rows="4" class="w-full border-gray-400 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-3" placeholder="Nhập ghi chú..."></textarea>
-                </div>
+                    <!-- Khung giờ -->
+                    <div>
+                        <label for="time_frame" class="block text-sm font-medium text-gray-700 mb-1">Khung giờ</label>
+                        <input type="time" id="time_frame" name="time_frame" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-2" required>
+                    </div>
 
-                <!-- Action Buttons -->
-                <div class="flex justify-between items-center pt-4">
-                    <button type="reset" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300 ease-in-out">
-                        Xóa bộ lọc
-                    </button>
-                    <button form="post-form" type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Đăng tin tìm đối thủ</span>
-                    </button>
+                    <!-- Ghi chú thêm -->
+                    <div>
+                        <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Ghi chú thêm</label>
+                        <textarea id="notes" name="notes" rows="3" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-2" placeholder="Ví dụ: Team mình đá vui vẻ, không bạo lực..."></textarea>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-end items-center pt-4">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out flex items-center space-x-2">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Đăng tin</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Posts Pane -->
+            <div id="posts-container" class="bg-white p-8 rounded-2xl shadow-lg">
+                <h2 class="text-2xl font-bold text-green-700 mb-6">Danh sách tin đã đăng</h2>
+                <div id="posts-list" class="space-y-4 max-h-[75vh] overflow-y-auto pr-2">
+                    {% if posts %}
+                        {% for post in posts %}
+                        <div class="border border-gray-200 rounded-lg p-6 space-y-4">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <img src="https://ui-avatars.com/api/?name={{ post.username[0] }}&background=random&color=fff&rounded=true&size=56" alt="Team Logo" class="rounded-full">
+                                <div>
+                                    <h3 class="text-xl font-bold text-green-700">{{ post.title }}</h3>
+                                    <p class="text-sm text-gray-500">Đăng bởi: <strong>{{ post.username }}</strong></p>
+                                </div>
+                            </div>
+                            <div class="space-y-3 text-gray-800">
+                                <p><i class="fa-solid fa-location-dot w-6 text-center mr-2 text-green-600"></i><strong>Địa điểm:</strong> {{ post.location }}</p>
+                                <p><i class="fa-solid fa-calendar-days w-6 text-center mr-2 text-green-600"></i><strong>Ngày:</strong> {{ post.match_date }}</p>
+                                <p><i class="fa-solid fa-clock w-6 text-center mr-2 text-green-600"></i><strong>Giờ:</strong> {{ post.time_frame }}</p>
+                                <p><i class="fa-solid fa-gauge-high w-6 text-center mr-2 text-green-600"></i><strong>Trình độ:</strong> {{ post.skill_level }}</p>
+                                {% if post.notes %}
+                                <div class="pt-2">
+                                    <i class="fa-solid fa-circle-info w-6 text-center mr-2 text-green-600"></i><strong>Ghi chú:</strong>
+                                    <p class="pl-8 text-gray-600">{{ post.notes }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="mt-6 text-center">
+                                 <button class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition w-full">
+                                    <i class="fa-solid fa-phone mr-2"></i> Liên hệ bắt cặp
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div id="no-posts-placeholder" class="text-center text-gray-500 py-10">
+                        <p>Chưa có tin nào được đăng.</p>
+                        <p class="text-sm mt-1">Hãy điền thông tin và nhấn "Đăng tin".</p>
+                    </div>
+                    {% endif %}
                 </div>
-            </form>
+            </div>
         </div>
     </main>
 
@@ -136,6 +178,5 @@
             });
         }
     </script>
-
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tìm Đối Bắt Cặp Đấu - Football Connect</title>
+    <title>Tìm Đội Bóng - Football Connect</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -49,7 +49,7 @@
             <!-- Filters Sidebar -->
             <aside class="w-1/4">
                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-bold mb-4">Tìm đối bắt cặp đấu</h2>
+                    <h2 class="text-xl font-bold mb-4">Tìm đội bóng</h2>
                     <form>
                         <div class="space-y-4">
                             <div>
@@ -67,26 +67,33 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="match_date" class="block text-base font-medium text-gray-700">Ngày thi đấu</label>
-                                <input type="date" id="match_date" name="match_date" class="mt-1 block w-full pl-3 pr-2 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md">
+                                <label for="missing_members" class="block text-base font-medium text-gray-700">Số lượng thành viên còn thiếu</label>
+                                <select id="missing_members" name="missing_members" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md">
+                                    <option>Tất cả</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4+</option>
+                                </select>
                             </div>
                             <div>
-                                <label for="skill_level" class="block text-base font-medium text-gray-700">Trình độ</label>
+                                <label for="skill_level" class="block text-base font-medium text-gray-700">Trình độ đội</label>
                                 <select id="skill_level" name="skill_level" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md">
                                     <option>Tất cả</option>
                                     <option>Yếu</option>
                                     <option>Trung bình</option>
                                     <option>Khá</option>
-                                    <option>Giỏi</option>
+                                    <option>Mạnh</option>
                                 </select>
                             </div>
                             <div>
-                                <label for="time_frame" class="block text-base font-medium text-gray-700">Khung giờ</label>
-                                <select id="time_frame" name="time_frame" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md">
-                                    <option value="Tất cả">Tất cả</option>
-                                    <option value="Sáng">Sáng (06:00 - 12:00)</option>
-                                    <option value="Chiều">Chiều (12:00 - 18:00)</option>
-                                    <option value="Tối">Tối (18:00 - 24:00)</option>
+                                <label for="activity_time" class="block text-base font-medium text-gray-700">Thời gian hoạt động</label>
+                                <select id="activity_time" name="activity_time" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md">
+                                    <option>Tất cả</option>
+                                    <option>Sáng</option>
+                                    <option>Chiều</option>
+                                    <option>Tối</option>
+                                    <option>Cuối tuần</option>
                                 </select>
                             </div>
                             <div class="flex space-x-2 pt-2">
@@ -105,45 +112,77 @@
             <!-- Results -->
             <div class="w-3/4">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold">Kết quả</h2>
+                    <h2 id="results-count" class="text-xl font-bold">Kết quả (0)</h2>
                     <div>
                         <select class="border-gray-300 rounded-md">
                             <option>Thời gian: Mới nhất</option>
+                            <option>Thời gian: Cũ nhất</option>
                         </select>
                     </div>
                 </div>
                 <div id="results-container" class="bg-white p-4 rounded-lg shadow-md">
-                    <div class="space-y-4">
-                        {% if posts %}
-                            {% for post in posts %}
-                            <div class="match-card border border-gray-200 rounded-lg p-4 flex justify-between items-center hover:bg-gray-50 transition" 
-                                 data-location="{{ post.location }}" 
-                                 data-match-date="{{ post.match_date }}" 
-                                 data-skill-level="{{ post.skill_level }}" 
-                                 data-time-frame="{{ post.time_frame }}"
-                                 data-author-name="{{ post.username }}"
-                                 data-author-phone="{{ post.author.phone }}">
-                                <div class="flex items-center space-x-4">
-                                    <img src="https://ui-avatars.com/api/?name={{ post.username[0] }}&background=random&color=fff&rounded=true&size=56" alt="Team Logo" class="rounded-full">
-                                    <div>
-                                        <h3 class="text-lg font-bold text-green-700">{{ post.title }}</h3>
-                                        <p class="text-sm text-gray-600 mt-1"><i class="fa-solid fa-location-dot w-4 mr-1 text-center"></i>{{ post.location }}</p>
-                                        <div class="flex space-x-4 text-sm text-gray-600 mt-1">
-                                            <span><i class="fa-solid fa-calendar-days w-4 mr-1 text-center"></i>{{ post.match_date }}, {{ post.time_frame }}</span>
-                                            <span><i class="fa-solid fa-gauge-high w-4 mr-1 text-center"></i>Trình độ: {{ post.skill_level }}</span>
-                                        </div>
+                    <div id="results-list" class="space-y-4">
+                        <!-- Example Team 1 -->
+                        <div class="team-card border border-gray-200 rounded-lg p-4 flex justify-between items-center hover:bg-gray-50 transition" data-location="Cầu Giấy" data-missing="2" data-skill="Trung bình" data-activity="Tối" data-author-name="Nguyễn Văn A" data-author-phone="0912345678">
+                            <div class="flex items-center space-x-4">
+                                <img src="https://ui-avatars.com/api/?name=CG&background=0D8ABC&color=fff&rounded=true&size=56" alt="Team Logo" class="rounded-full">
+                                <div>
+                                    <h3 class="text-lg font-bold text-green-700">FC Cầu Giấy United</h3>
+                                    <p class="text-sm text-gray-600 mt-1"><i class="fa-solid fa-location-dot w-4 mr-1 text-center"></i>Khu vực: Cầu Giấy</p>
+                                    <div class="flex space-x-4 text-sm text-gray-600 mt-1">
+                                        <span><i class="fa-solid fa-users w-4 mr-1 text-center"></i>Thiếu: 2 người</span>
+                                        <span><i class="fa-solid fa-gauge-high w-4 mr-1 text-center"></i>Trình độ: Trung bình</span>
+                                        <span><i class="fa-solid fa-clock w-4 mr-1 text-center"></i>Hoạt động: Tối</span>
                                     </div>
                                 </div>
-                                <button class="contact-button bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition">
-                                    Bắt cặp
-                                </button>
                             </div>
-                            {% endfor %}
-                        {% else %}
-                        <div class="text-center text-gray-500 py-10">
-                            <p>Không có tin đăng nào.</p>
+                            <button class="contact-button bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition">
+                                Xin gia nhập
+                            </button>
                         </div>
-                        {% endif %}
+
+                        <!-- Example Team 2 -->
+                        <div class="team-card border border-gray-200 rounded-lg p-4 flex justify-between items-center hover:bg-gray-50 transition" data-location="Hà Đông" data-missing="1" data-skill="Khá" data-activity="Cuối tuần" data-author-name="Trần Thị B" data-author-phone="0987654321">
+                            <div class="flex items-center space-x-4">
+                                <img src="https://ui-avatars.com/api/?name=HD&background=1E90FF&color=fff&rounded=true&size=56" alt="Team Logo" class="rounded-full">
+                                <div>
+                                    <h3 class="text-lg font-bold text-green-700">FC Hà Đông Warriors</h3>
+                                    <p class="text-sm text-gray-600 mt-1"><i class="fa-solid fa-location-dot w-4 mr-1 text-center"></i>Khu vực: Hà Đông</p>
+                                    <div class="flex space-x-4 text-sm text-gray-600 mt-1">
+                                        <span><i class="fa-solid fa-users w-4 mr-1 text-center"></i>Thiếu: 1 người</span>
+                                        <span><i class="fa-solid fa-gauge-high w-4 mr-1 text-center"></i>Trình độ: Khá</span>
+                                        <span><i class="fa-solid fa-clock w-4 mr-1 text-center"></i>Hoạt động: Cuối tuần</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="contact-button bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition">
+                                Xin gia nhập
+                            </button>
+                        </div>
+
+                        <!-- Example Team 3 -->
+                        <div class="team-card border border-gray-200 rounded-lg p-4 flex justify-between items-center hover:bg-gray-50 transition" data-location="Thanh Xuân" data-missing="3" data-skill="Yếu" data-activity="Sáng" data-author-name="Lê Văn C" data-author-phone="0905123456">
+                            <div class="flex items-center space-x-4">
+                                <img src="https://ui-avatars.com/api/?name=TX&background=FF4500&color=fff&rounded=true&size=56" alt="Team Logo" class="rounded-full">
+                                <div>
+                                    <h3 class="text-lg font-bold text-green-700">FC Thanh Xuân Legends</h3>
+                                    <p class="text-sm text-gray-600 mt-1"><i class="fa-solid fa-location-dot w-4 mr-1 text-center"></i>Khu vực: Thanh Xuân</p>
+                                    <div class="flex space-x-4 text-sm text-gray-600 mt-1">
+                                        <span><i class="fa-solid fa-users w-4 mr-1 text-center"></i>Thiếu: 3 người</span>
+                                        <span><i class="fa-solid fa-gauge-high w-4 mr-1 text-center"></i>Trình độ: Yếu</span>
+                                        <span><i class="fa-solid fa-clock w-4 mr-1 text-center"></i>Hoạt động: Sáng</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="contact-button bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition">
+                                Xin gia nhập
+                            </button>
+                        </div>
+
+                        <div id="no-results" class="text-center text-gray-500 py-16 hidden">
+                            <p>Không tìm thấy đội bóng nào phù hợp.</p>
+                            <p class="text-sm">Hãy thử thay đổi bộ lọc của bạn.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -157,11 +196,11 @@
             <div class="text-center">
                 <i class="fa-solid fa-address-book text-green-500 text-4xl mb-4"></i>
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">Thông tin liên hệ</h2>
-                <p class="text-gray-600 mb-6">Hãy liên hệ với người đăng tin để sắp xếp trận đấu.</p>
+                <p class="text-gray-600 mb-6">Hãy liên hệ với đội trưởng để xin gia nhập.</p>
             </div>
             <div class="space-y-4">
                 <div class="p-4 bg-gray-100 rounded-lg">
-                    <p class="text-sm font-medium text-gray-500">Tên người đăng</p>
+                    <p class="text-sm font-medium text-gray-500">Tên đội trưởng</p>
                     <p id="modal-author-name" class="text-lg font-semibold text-gray-900"></p>
                 </div>
                 <div class="p-4 bg-gray-100 rounded-lg">
@@ -188,82 +227,67 @@
             });
         }
 
-        // Filter logic
-        const filterButton = document.getElementById('filter-button');
-        const resetFilterButton = document.getElementById('reset-filter-button');
+        // --- Filter Logic ---
         const locationSelect = document.getElementById('location');
-        const matchDateSelect = document.getElementById('match_date');
+        const missingMembersSelect = document.getElementById('missing_members');
         const skillLevelSelect = document.getElementById('skill_level');
-        const timeFrameSelect = document.getElementById('time_frame');
-        const matchCards = document.querySelectorAll('.match-card');
-        const resultsCount = document.querySelector('.text-xl.font-bold');
+        const activityTimeSelect = document.getElementById('activity_time');
+        const resetFilterButton = document.getElementById('reset-filter-button');
+        const filterButton = document.getElementById('filter-button');
+        
+        const teamCards = document.querySelectorAll('.team-card');
+        const resultsCountEl = document.getElementById('results-count');
+        const noResultsEl = document.getElementById('no-results');
 
-        // --- Populate Date Filter ---
-        function populateDateFilter() {
-            // No longer needed as we use a date input
-        }
+        function filterTeams() {
+            const location = locationSelect.value;
+            const missing = missingMembersSelect.value;
+            const skill = skillLevelSelect.value;
+            const activity = activityTimeSelect.value;
+            
+            let visibleCount = 0;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // We can add any other init logic here if needed
-        });
-
-
-        function filterMatches() {
-            const selectedLocation = locationSelect.value;
-            const selectedMatchDate = matchDateSelect.value; // This will be in YYYY-MM-DD format or empty
-            const selectedSkillLevel = skillLevelSelect.value;
-            const selectedTimeFrame = timeFrameSelect.value;
-            let count = 0;
-
-            matchCards.forEach(card => {
+            teamCards.forEach(card => {
                 const cardLocation = card.dataset.location;
-                const cardMatchDate = card.dataset.matchDate;
-                const cardSkillLevel = card.dataset.skillLevel;
-                const cardTime = card.dataset.timeFrame; // e.g., "20:30"
+                const cardMissing = card.dataset.missing;
+                const cardSkill = card.dataset.skill;
+                const cardActivity = card.dataset.activity;
 
-                // Handle multiple skill levels like "Yếu - Trung bình"
-                const skillLevels = cardSkillLevel.split(' - ');
+                const locationMatch = location === 'Tất cả' || location === cardLocation;
+                const missingMatch = missing === 'Tất cả' || (missing === '4+' ? parseInt(cardMissing) >= 4 : missing === cardMissing);
+                const skillMatch = skill === 'Tất cả' || skill === cardSkill;
+                const activityMatch = activity === 'Tất cả' || activity === cardActivity;
 
-                const locationMatch = selectedLocation === 'Tất cả' || selectedLocation === cardLocation;
-                const matchDateMatch = !selectedMatchDate || selectedMatchDate === cardMatchDate;
-                const skillLevelMatch = selectedSkillLevel === 'Tất cả' || skillLevels.includes(selectedSkillLevel);
-                
-                let timeFrameMatch = false;
-                if (selectedTimeFrame === 'Tất cả') {
-                    timeFrameMatch = true;
-                } else if (cardTime) {
-                    const hour = parseInt(cardTime.split(':')[0]);
-                    if (selectedTimeFrame === 'Sáng' && hour >= 6 && hour < 12) {
-                        timeFrameMatch = true;
-                    } else if (selectedTimeFrame === 'Chiều' && hour >= 12 && hour < 18) {
-                        timeFrameMatch = true;
-                    } else if (selectedTimeFrame === 'Tối' && hour >= 18 && hour < 24) {
-                        timeFrameMatch = true;
-                    }
-                }
-
-                if (locationMatch && matchDateMatch && skillLevelMatch && timeFrameMatch) {
+                if (locationMatch && missingMatch && skillMatch && activityMatch) {
                     card.style.display = 'flex';
-                    count++;
+                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
-            resultsCount.textContent = `Kết quả (${count})`;
+
+            resultsCountEl.textContent = `Kết quả (${visibleCount})`;
+            if (visibleCount === 0) {
+                noResultsEl.classList.remove('hidden');
+            } else {
+                noResultsEl.classList.add('hidden');
+            }
         }
 
-        filterButton.addEventListener('click', filterMatches);
-
-        resetFilterButton.addEventListener('click', () => {
+        function resetFilters() {
             locationSelect.value = 'Tất cả';
-            matchDateSelect.value = ''; // Reset date input
+            missingMembersSelect.value = 'Tất cả';
             skillLevelSelect.value = 'Tất cả';
-            timeFrameSelect.value = 'Tất cả';
-            filterMatches();
-        });
+            activityTimeSelect.value = 'Tất cả';
+            filterTeams();
+        }
 
-        // Initial filter on page load
-        filterMatches();
+        // Add event listeners
+        filterButton.addEventListener('click', filterTeams);
+        resetFilterButton.addEventListener('click', resetFilters);
+
+        // Initial filter on page load to set the correct count
+        document.addEventListener('DOMContentLoaded', filterTeams);
 
         // --- Modal Logic ---
         const contactModal = document.getElementById('contact-modal');
@@ -295,7 +319,7 @@
 
         contactButtons.forEach(button => {
             button.addEventListener('click', (event) => {
-                const card = event.target.closest('.match-card');
+                const card = event.target.closest('.team-card');
                 const authorName = card.dataset.authorName;
                 const authorPhone = card.dataset.authorPhone;
                 showContactModal(authorName, authorPhone);

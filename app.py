@@ -24,9 +24,22 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     phone = db.Column(db.String(20))
+    posts = db.relationship('Post', backref='author', lazy=True)
 
     def get_id(self):
         return str(self.id)
+
+# Bảng tin đăng
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    location = db.Column(db.String(200), nullable=False)
+    match_date = db.Column(db.String(50), nullable=False)
+    skill_level = db.Column(db.String(50), nullable=False)
+    time_frame = db.Column(db.String(50), nullable=False)
+    notes = db.Column(db.Text, nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    username = db.Column(db.String(100), nullable=False)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -115,22 +128,40 @@ def find_opponent():
         time_frame = request.form.get('time_frame')
         notes = request.form.get('notes')
         
-        # (Bạn có thể thêm logic để lưu tin đăng vào database ở đây)
+        new_post = Post(
+            title=title,
+            location=location,
+            match_date=match_date,
+            skill_level=skill_level,
+            time_frame=time_frame,
+            notes=notes,
+            user_id=current_user.id,
+            username=current_user.username
+        )
+        db.session.add(new_post)
+        db.session.commit()
         
         flash(f'Đã đăng tin "{title}" thành công!', 'success')
-        return redirect(url_for('find_opponent')) # Hoặc chuyển đến trang danh sách tin đăng
+        return redirect(url_for('find_opponent'))
 
-    return render_template('find_opponent.html')
+    posts = Post.query.order_by(Post.id.desc()).all()
+    return render_template('find_opponent.html', posts=posts)
 
 @app.route('/find_match')
 @login_required
 def find_match():
-    return render_template('find_match.html')
+    posts = Post.query.order_by(Post.id.desc()).all()
+    return render_template('find_match.html', posts=posts)
 
 @app.route('/map')
 @login_required
 def map_view():
     return render_template('map_view.html')
+
+@app.route('/find_team')
+@login_required
+def find_team():
+    return render_template('find_team.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
