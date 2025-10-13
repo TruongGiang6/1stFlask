@@ -163,5 +163,28 @@ def map_view():
 def find_team():
     return render_template('find_team.html')
 
+@app.route('/admin')
+@login_required
+def admin():
+    if current_user.username != 'admin':
+        flash('Bạn không có quyền truy cập trang này!', 'error')
+        return redirect(url_for('dashboard'))
+    
+    posts = Post.query.order_by(Post.id.desc()).all()
+    return render_template('admin.html', posts=posts)
+
+@app.route('/admin/delete/<int:post_id>', methods=['POST'])
+@login_required
+def delete_post(post_id):
+    if current_user.username != 'admin':
+        flash('Bạn không có quyền thực hiện hành động này!', 'error')
+        return redirect(url_for('admin'))
+        
+    post = Post.query.get_or_404(post_id)
+    db.session.delete(post)
+    db.session.commit()
+    flash(f'Đã xóa bài đăng "{post.title}".', 'success')
+    return redirect(url_for('admin'))
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

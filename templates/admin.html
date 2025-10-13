@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý bài đăng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto mt-10 p-8 bg-white rounded-lg shadow-lg max-w-6xl">
+        <h1 class="text-3xl font-bold text-center text-green-700 mb-8">Quản lý bài đăng cầu thủ</h1>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-4">
+                {% for category, message in messages %}
+                    <div class="p-4 rounded-md {{ 'bg-green-100 text-green-700' if category == 'success' else 'bg-red-100 text-red-700' }}" role="alert">
+                        <span class="font-bold">{{ message }}</span>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Thanh tìm kiếm -->
+        <div class="flex items-center mb-6">
+            <input type="text" id="searchInput" class="flex-grow px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Tìm theo tên cầu thủ hoặc tiêu đề...">
+            <button onclick="searchPosts()" class="bg-green-600 text-white px-6 py-2 ml-2 rounded-md hover:bg-green-700 flex items-center">
+                <i class="fas fa-search mr-2"></i> Tìm kiếm
+            </button>
+            <button onclick="clearSearch()" class="bg-gray-600 text-white px-6 py-2 ml-2 rounded-md hover:bg-gray-700 flex items-center">
+                <i class="fas fa-undo mr-2"></i> Xóa lọc
+            </button>
+        </div>
+
+        <!-- Bảng hiển thị bài đăng -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white">
+                <thead class="bg-green-100">
+                    <tr>
+                        <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Tiêu đề</th>
+                        <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Tên cầu thủ</th>
+                        <th class="py-3 px-4 text-left text-sm font-semibold text-gray-700">Ngày đăng</th>
+                        <th class="py-3 px-4 text-center text-sm font-semibold text-gray-700">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="postsTable">
+                    {% for post in posts %}
+                    <tr class="border-b hover:bg-gray-50 post-row" data-title="{{ post.title.lower() }}" data-username="{{ post.username.lower() }}">
+                        <td class="py-3 px-4">{{ post.title }}</td>
+                        <td class="py-3 px-4">{{ post.username }}</td>
+                        <td class="py-3 px-4">{{ post.match_date }}</td>
+                        <td class="py-3 px-4 text-center">
+                            <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài đăng này không?');">
+                                <button type="submit" class="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-600 text-sm flex items-center">
+                                    <i class="fas fa-trash-alt mr-1"></i> Xóa
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function searchPosts() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#postsTable .post-row');
+            
+            rows.forEach(row => {
+                const title = row.getAttribute('data-title');
+                const username = row.getAttribute('data-username');
+                
+                if (title.includes(searchInput) || username.includes(searchInput)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            const rows = document.querySelectorAll('#postsTable .post-row');
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+        }
+
+        document.getElementById('searchInput').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                searchPosts();
+            }
+        });
+    </script>
+</body>
+</html>
