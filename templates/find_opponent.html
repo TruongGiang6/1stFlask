@@ -74,8 +74,8 @@
 
                     <!-- Sân bóng -->
                     <div>
-                        <label for="pitch" class="block text-sm font-medium text-gray-700 mb-1">Sân bóng</label>
-                        <input type="text" id="pitch" name="pitch" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-2" placeholder="Ví dụ: Sân bóng Minh Kiệt" required>
+                        <label for="pitch" class="block text-sm font-medium text-gray-700">Sân bóng</label>
+                        <input type="text" name="pitch" id="pitch" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500">
                     </div>
 
                     <!-- Ngày thi đấu -->
@@ -137,6 +137,10 @@
                                 <p><i class="fa-solid fa-calendar-days w-6 text-center mr-2 text-green-600"></i><strong>Ngày:</strong> {{ post.match_date }}</p>
                                 <p><i class="fa-solid fa-clock w-6 text-center mr-2 text-green-600"></i><strong>Giờ:</strong> {{ post.time_frame }}</p>
                                 <p><i class="fa-solid fa-gauge-high w-6 text-center mr-2 text-green-600"></i><strong>Trình độ:</strong> {{ post.skill_level }}</p>
+                                <div>
+                                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Sân bóng</p>
+                                    <p class="font-semibold text-gray-800">{{ post.pitch }}</p>
+                                </div>
                                 {% if post.notes %}
                                 <div class="pt-2">
                                     <i class="fa-solid fa-circle-info w-6 text-center mr-2 text-green-600"></i><strong>Ghi chú:</strong>

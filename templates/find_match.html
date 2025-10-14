@@ -127,7 +127,10 @@
                                     <img src="https://ui-avatars.com/api/?name={{ post.username[0] }}&background=random&color=fff&rounded=true&size=56" alt="Team Logo" class="rounded-full">
                                     <div>
                                         <h3 class="text-lg font-bold text-green-700">{{ post.title }}</h3>
-                                        <p class="text-sm text-gray-600 mt-1"><i class="fa-solid fa-location-dot w-4 mr-1 text-center"></i>{{ post.location }}</p>
+                                        <div class="flex flex-col sm:flex-row sm:space-x-4 text-sm text-gray-600 mt-1">
+                                            <p><i class="fa-solid fa-location-dot w-4 mr-1 text-center"></i>{{ post.location }}</p>
+                                            <p><i class="fa-solid fa-futbol w-4 mr-1 text-center"></i>{{ post.pitch }}</p>
+                                        </div>
                                         <div class="flex space-x-4 text-sm text-gray-600 mt-1">
                                             <span><i class="fa-solid fa-calendar-days w-4 mr-1 text-center"></i>{{ post.match_date }}, {{ post.time_frame }}</span>
                                             <span><i class="fa-solid fa-gauge-high w-4 mr-1 text-center"></i>Trình độ: {{ post.skill_level }}</span>

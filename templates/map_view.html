@@ -72,26 +72,23 @@
             <!-- Left Column: Filters and Results -->
             <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-md h-fit">
                 <div class="mb-6">
-                    <label for="khu-vuc" class="block text-lg font-bold text-gray-800">Chọn khu vực</label>
-                    <p class="text-sm text-gray-500 mb-2">Bản đồ sẽ tự động cập nhật theo lựa chọn của bạn.</p>
-                    <select id="khu-vuc" class="mt-1 block w-full p-3 border-gray-300 rounded-md shadow-sm focus:ring-green-500 focus:border-green-500 text-base">
-                        <option>Tất cả</option>
-                        <option>Ba Đình</option>
-                        <option>Hoàn Kiếm</option>
-                        <option>Đống Đa</option>
-                        <option>Cầu Giấy</option>
-                        <option>Hai Bà Trưng</option>
-                        <option>Thanh Xuân</option>
-                        <option>Hà Đông</option>
-                        <option>Long Biên</option>
-                        <option>Tây Hồ</option>
-                        <option>Hoàng Mai</option>
-                        <option>Nam Từ Liêm</option>
-                        <option>Bắc Từ Liêm</option>
-                    </select>
+                    <h2 class="text-lg font-bold text-gray-800 mb-2">Tìm kiếm sân bóng</h2>
+                    <button id="find-nearby-btn" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                        <span>Tìm sân bóng gần tôi</span>
+                    </button>
+                    <p class="text-center text-gray-500 my-2">hoặc</p>
+                    <div class="flex">
+                        <input type="text" id="manual-location-input" placeholder="Nhập địa điểm của bạn..." class="w-full border-gray-300 rounded-l-lg shadow-sm focus:border-green-500 focus:ring-green-500 text-lg p-3">
+                        <button id="manual-search-btn" class="bg-gray-600 text-white font-semibold px-5 rounded-r-lg hover:bg-gray-700 transition flex items-center">
+                            <i class="fa-solid fa-search text-xl"></i>
+                        </button>
+                    </div>
+                     <div id="error-message" class="hidden mt-2 text-sm text-red-600 bg-red-100 p-3 rounded-lg"></div>
                 </div>
-                <h2 class="text-xl font-bold text-green-700 mb-4">Các sân trong khu vực</h2>
+                <h2 class="text-xl font-bold text-green-700 mb-4">Kết quả tìm kiếm</h2>
                 <div id="results-list" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    <p class="text-gray-500">Hãy bắt đầu bằng cách tìm sân gần bạn hoặc nhập địa điểm.</p>
                     <!-- Results will be populated by JavaScript -->
                 </div>
             </div>
@@ -121,34 +118,7 @@
 
         // --- Map and Filtering Logic ---
 
-        // 1. Data for pitches and districts
-        const pitches = {
-            "Sân Mỹ Đình": { lat: 21.0288, lng: 105.7611, khuVuc: "Nam Từ Liêm", loaiSan: "Sân 11 người", gia: "1,200,000 VNĐ", sdt: "0912345678" },
-            "Sân Cầu Giấy": { lat: 21.0310, lng: 105.7930, khuVuc: "Cầu Giấy", loaiSan: "Sân 7 người", gia: "650,000 VNĐ", sdt: "0987654321" },
-            "Sân Hoàng Mai": { lat: 20.9800, lng: 105.8450, khuVuc: "Hoàng Mai", loaiSan: "Sân 7 người", gia: "500,000 VNĐ", sdt: "0911223344" },
-            "Sân Tây Hồ": { lat: 21.0700, lng: 105.8220, khuVuc: "Tây Hồ", loaiSan: "Sân 7 người", gia: "600,000 VNĐ", sdt: "0955667788" },
-            "Sân VSA": { lat: 20.9950, lng: 105.8150, khuVuc: "Thanh Xuân", loaiSan: "Sân 7 người", gia: "700,000 VNĐ", sdt: "0944556677" },
-            "Sân Bách Khoa": { lat: 21.0050, lng: 105.8440, khuVuc: "Hai Bà Trưng", loaiSan: "Sân 11 người", gia: "1,000,000 VNĐ", sdt: "0933445566" },
-            "Sân Long Biên": { lat: 21.0400, lng: 105.8800, khuVuc: "Long Biên", loaiSan: "Sân 7 người", gia: "550,000 VNĐ", sdt: "0922334455" }
-        };
-
-        const districtCoordinates = {
-            "Tất cả": { lat: 21.0278, lng: 105.8342, zoom: 12 },
-            "Ba Đình": { lat: 21.0362, lng: 105.8220, zoom: 14 },
-            "Hoàn Kiếm": { lat: 21.0287, lng: 105.8502, zoom: 15 },
-            "Đống Đa": { lat: 21.0165, lng: 105.8295, zoom: 14 },
-            "Cầu Giấy": { lat: 21.0310, lng: 105.7930, zoom: 14 },
-            "Hai Bà Trưng": { lat: 21.0050, lng: 105.8440, zoom: 14 },
-            "Thanh Xuân": { lat: 20.9950, lng: 105.8150, zoom: 14 },
-            "Hà Đông": { lat: 20.9675, lng: 105.7700, zoom: 13 },
-            "Long Biên": { lat: 21.0400, lng: 105.8800, zoom: 14 },
-            "Tây Hồ": { lat: 21.0700, lng: 105.8220, zoom: 14 },
-            "Hoàng Mai": { lat: 20.9800, lng: 105.8450, zoom: 14 },
-            "Nam Từ Liêm": { lat: 21.0288, lng: 105.7611, zoom: 14 },
-            "Bắc Từ Liêm": { lat: 21.0600, lng: 105.7600, zoom: 14 }
-        };
-
-        // 2. Initialize Map
+        // 1. Khởi tạo bản đồ
         const map = L.map('map').setView([21.0278, 105.8342], 12);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -156,54 +126,179 @@
         }).addTo(map);
 
         const markers = L.layerGroup().addTo(map);
+        let userMarker;
 
-        // 3. DOM Elements
-        const khuVucSelect = document.getElementById('khu-vuc');
+        // 2. DOM Elements
+        const findNearbyBtn = document.getElementById('find-nearby-btn');
+        const manualSearchBtn = document.getElementById('manual-search-btn');
+        const manualLocationInput = document.getElementById('manual-location-input');
         const resultsList = document.getElementById('results-list');
+        const errorMessage = document.getElementById('error-message');
 
-        // 4. Functions
-        function updateMapAndList() {
-            const selectedKhuVuc = khuVucSelect.value;
+        // 3. Functions
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        function hideError() {
+            errorMessage.classList.add('hidden');
+        }
+
+        async function fetchPitchesFromOSM(lat, lon) {
+            const radius = 5000; // 5km radius
+            const query = `
+                [out:json][timeout:25];
+                (
+                  node["leisure"="pitch"]["sport"~"soccer|football"](around:${radius},${lat},${lon});
+                  way["leisure"="pitch"]["sport"~"soccer|football"](around:${radius},${lat},${lon});
+                );
+                out center;`;
             
-            // Clear previous markers and list
+            const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                return data.elements.map(el => {
+                    const center = el.center || { lat: el.lat, lon: el.lon };
+                    return {
+                        id: el.id,
+                        lat: center.lat,
+                        lng: center.lon,
+                        name: el.tags.name || "Sân bóng không tên",
+                        address: el.tags['addr:full'] || el.tags['addr:street'] || "Không có địa chỉ"
+                    };
+                });
+            } catch (e) {
+                console.error("Overpass API error:", e);
+                showError("Lỗi khi tải dữ liệu sân bóng. Vui lòng thử lại.");
+                return [];
+            }
+        }
+
+        function updateListAndMap(centerLat, centerLng, pitches) {
+            hideError();
             markers.clearLayers();
             resultsList.innerHTML = '';
 
-            // Center map on the selected district
-            const district = districtCoordinates[selectedKhuVuc];
-            if (district) {
-                map.setView([district.lat, district.lng], district.zoom);
+            // Add or move user's location marker
+            if (userMarker) {
+                userMarker.setLatLng([centerLat, centerLng]);
+            } else {
+                userMarker = L.marker([centerLat, centerLng], {
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(map);
+                userMarker.bindPopup("<b>Vị trí của bạn</b>").openPopup();
+            }
+            
+            map.setView([centerLat, centerLng], 14);
+
+            if (!pitches || pitches.length === 0) {
+                resultsList.innerHTML = '<p class="text-gray-500">Không tìm thấy sân bóng nào trong vòng 5km.</p>';
+                return;
             }
 
-            // Filter and display pitches
-            Object.entries(pitches).forEach(([name, data]) => {
-                if (selectedKhuVuc === 'Tất cả' || data.khuVuc === selectedKhuVuc) {
-                    // Add marker to map
-                    const marker = L.marker([data.lat, data.lng]).addTo(markers);
-                    marker.bindPopup(`<h3>${name}</h3><p><b>Khu vực:</b> ${data.khuVuc}<br><b>Loại sân:</b> ${data.loaiSan}<br><b>Giá:</b> ${data.gia}<br><b>SĐT:</b> ${data.sdt}</p>`);
+            // Calculate distances and sort pitches
+            const sortedPitches = pitches.map(pitch => {
+                const distance = map.distance([centerLat, centerLng], [pitch.lat, pitch.lng]);
+                return { ...pitch, distance };
+            }).sort((a, b) => a.distance - b.distance);
 
-                    // Add item to list
-                    const listItem = document.createElement('div');
-                    listItem.className = 'p-3 bg-gray-50 rounded-md shadow-sm cursor-pointer hover:bg-green-100 hover:shadow-md transition';
-                    listItem.innerHTML = `
-                        <h3 class="font-bold text-green-700">${name}</h3>
-                        <p class="text-sm text-gray-600">${data.khuVuc} | ${data.loaiSan}</p>
-                        <p class="text-sm font-semibold text-gray-800">Giá: ${data.gia}</p>
-                    `;
-                    listItem.addEventListener('click', () => {
-                        map.setView([data.lat, data.lng], 16);
-                        marker.openPopup();
-                    });
-                    resultsList.appendChild(listItem);
-                }
+            // Populate list and map
+            sortedPitches.forEach(data => {
+                // Add marker to map
+                const marker = L.marker([data.lat, data.lng]).addTo(markers);
+                marker.bindPopup(`
+                    <h3>${data.name}</h3>
+                    <p><b>Địa chỉ:</b> ${data.address}<br>
+                       <b>Khoảng cách:</b> ${(data.distance / 1000).toFixed(2)} km</p>
+                    <a href="https://www.openstreetmap.org/?mlat=${data.lat}&mlon=${data.lng}#map=18/${data.lat}/${data.lng}" target="_blank" class="mt-2 inline-block w-full text-center bg-blue-500 text-white text-sm py-1 px-2 rounded hover:bg-blue-600">Xem trên OSM</a>
+                `);
+
+                // Add item to list
+                const listItem = document.createElement('div');
+                listItem.className = 'p-4 bg-gray-50 rounded-lg shadow-sm cursor-pointer hover:bg-green-100 hover:shadow-md transition';
+                listItem.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-bold text-green-700 text-lg">${data.name}</h3>
+                        <p class="text-sm text-blue-600 font-bold">${(data.distance / 1000).toFixed(2)} km</p>
+                    </div>
+                    <p class="text-sm text-gray-600">${data.address}</p>
+                `;
+                listItem.addEventListener('click', () => {
+                    map.setView([data.lat, data.lng], 17);
+                    marker.openPopup();
+                });
+                resultsList.appendChild(listItem);
             });
         }
 
-        // 5. Event Listeners
-        khuVucSelect.addEventListener('change', updateMapAndList);
+        async function handleLocationSuccess(position) {
+            const { latitude, longitude } = position.coords;
+            resultsList.innerHTML = '<p class="text-gray-500 animate-pulse">Đang tìm các sân bóng...</p>';
+            const pitches = await fetchPitchesFromOSM(latitude, longitude);
+            updateListAndMap(latitude, longitude, pitches);
+        }
 
-        // Initial load
-        window.addEventListener('load', updateMapAndList);
+        function handleLocationError(error) {
+            console.error("Error getting location: ", error);
+            showError("Không thể truy cập vị trí của bạn. Vui lòng cấp quyền hoặc nhập địa điểm thủ công.");
+            resultsList.innerHTML = '<p class="text-gray-500">Không thể lấy vị trí.</p>';
+        }
+        
+        async function searchManualLocation() {
+            const query = manualLocationInput.value;
+            if (!query) {
+                showError("Vui lòng nhập một địa điểm để tìm kiếm.");
+                return;
+            }
+            resultsList.innerHTML = `<p class="text-gray-500 animate-pulse">Đang tìm địa điểm "${query}"...</p>`;
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=VN`);
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    const { lat, lon } = data[0];
+                    const latitude = parseFloat(lat);
+                    const longitude = parseFloat(lon);
+                    resultsList.innerHTML = '<p class="text-gray-500 animate-pulse">Đang tìm các sân bóng...</p>';
+                    const pitches = await fetchPitchesFromOSM(latitude, longitude);
+                    updateListAndMap(latitude, longitude, pitches);
+                } else {
+                    showError("Không tìm thấy địa điểm. Vui lòng thử lại với tên khác.");
+                    resultsList.innerHTML = '<p class="text-gray-500">Không tìm thấy địa điểm bạn đã nhập.</p>';
+                }
+            } catch (e) {
+                console.error("Geocoding error:", e);
+                showError("Lỗi khi tìm kiếm địa điểm. Vui lòng kiểm tra kết nối mạng.");
+                resultsList.innerHTML = '<p class="text-gray-500">Lỗi tìm kiếm.</p>';
+            }
+        }
+
+        // 4. Event Listeners
+        findNearbyBtn.addEventListener('click', () => {
+            resultsList.innerHTML = '<p class="text-gray-500 animate-pulse">Đang xác định vị trí của bạn...</p>';
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(handleLocationSuccess, handleLocationError);
+            } else {
+                showError("Trình duyệt của bạn không hỗ trợ định vị.");
+                resultsList.innerHTML = '<p class="text-gray-500">Trình duyệt không hỗ trợ định vị.</p>';
+            }
+        });
+        
+        manualSearchBtn.addEventListener('click', searchManualLocation);
+        manualLocationInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchManualLocation();
+            }
+        });
 
     </script>
 
