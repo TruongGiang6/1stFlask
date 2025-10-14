@@ -144,10 +144,72 @@
                                 </div>
                                 {% endif %}
                             </div>
-                            <div class="mt-6 text-center">
-                                 <button class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition w-full">
-                                    <i class="fa-solid fa-phone mr-2"></i> Liên hệ bắt cặp
-                                </button>
+                            
+                            <!-- Action Buttons & Rating Section -->
+                            <div class="mt-6">
+                                <div class="grid grid-cols-2 gap-3">
+                                    {% if post.status == 'open' %}
+                                    <form action="{{ url_for('close_post', post_id=post.id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn đóng tin này không? Tin đã đóng sẽ không thể mở lại.');">
+                                        <button type="submit" class="w-full bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-yellow-600 transition flex items-center justify-center">
+                                            <i class="fa-solid fa-check-circle mr-2"></i> Đã tìm được đối
+                                        </button>
+                                    </form>
+                                    <form action="{{ url_for('delete_user_post', post_id=post.id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa tin này không?');">
+                                        <button type="submit" class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition flex items-center justify-center">
+                                            <i class="fa-solid fa-trash mr-2"></i> Xóa tin
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <div class="col-span-2 flex items-center justify-center gap-3">
+                                        {% if ratings.get(post.id) %}
+                                            <span class="inline-block bg-blue-100 text-blue-700 font-semibold py-2 px-4 rounded-lg">
+                                                <i class="fa-solid fa-check-double mr-2"></i> Đã đánh giá
+                                            </span>
+                                        {% else %}
+                                            <button onclick="toggleRatingForm('rating-form-{{ post.id }}')" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition">
+                                                <i class="fa-solid fa-star mr-2"></i> Đánh giá
+                                            </button>
+                                        {% endif %}
+                                        <span class="inline-block bg-gray-200 text-gray-600 font-semibold py-2 px-4 rounded-lg">
+                                            <i class="fa-solid fa-lock mr-2"></i> Tin đã đóng
+                                        </span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Submitted Rating Display -->
+                                {% if ratings.get(post.id) %}
+                                <div class="mt-4 border-t pt-4">
+                                    <h4 class="font-bold text-lg mb-2">Đánh giá của bạn về đối thủ</h4>
+                                    <div class="flex items-center mb-2">
+                                        {% for i in range(5) %}
+                                            <span class="text-2xl {% if i < ratings[post.id].stars %}text-yellow-400{% else %}text-gray-300{% endif %}">&#9733;</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% if ratings[post.id].comment %}
+                                    <p class="text-gray-600 bg-gray-50 p-3 rounded-lg">{{ ratings[post.id].comment }}</p>
+                                    {% endif %}
+                                </div>
+                                {% else %}
+                                <!-- Hidden Rating Form -->
+                                <div id="rating-form-{{ post.id }}" class="hidden mt-4 border-t pt-4">
+                                    <form action="{{ url_for('rate_opponent', post_id=post.id) }}" method="POST">
+                                        <h4 class="font-bold text-lg mb-3">Đánh giá đối thủ</h4>
+                                        <div class="flex items-center mb-3 rating-stars">
+                                            <input type="radio" id="star5-{{ post.id }}" name="rating" value="5" class="hidden"/><label for="star5-{{ post.id }}" class="text-2xl cursor-pointer text-gray-300 hover:text-yellow-400 transition">&#9733;</label>
+                                            <input type="radio" id="star4-{{ post.id }}" name="rating" value="4" class="hidden"/><label for="star4-{{ post.id }}" class="text-2xl cursor-pointer text-gray-300 hover:text-yellow-400 transition">&#9733;</label>
+                                            <input type="radio" id="star3-{{ post.id }}" name="rating" value="3" class="hidden"/><label for="star3-{{ post.id }}" class="text-2xl cursor-pointer text-gray-300 hover:text-yellow-400 transition">&#9733;</label>
+                                            <input type="radio" id="star2-{{ post.id }}" name="rating" value="2" class="hidden"/><label for="star2-{{ post.id }}" class="text-2xl cursor-pointer text-gray-300 hover:text-yellow-400 transition">&#9733;</label>
+                                            <input type="radio" id="star1-{{ post.id }}" name="rating" value="1" class="hidden"/><label for="star1-{{ post.id }}" class="text-2xl cursor-pointer text-gray-300 hover:text-yellow-400 transition">&#9733;</label>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="comment-{{ post.id }}" class="block text-sm font-medium text-gray-700 mb-1">Nhận xét</label>
+                                            <textarea id="comment-{{ post.id }}" name="comment" rows="3" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-green-500 focus:ring-green-500 px-4 py-2" placeholder="Viết nhận xét..."></textarea>
+                                        </div>
+                                        <button type="submit" class="bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition">Gửi đánh giá</button>
+                                    </form>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                         {% endfor %}
@@ -161,6 +223,19 @@
             </div>
         </div>
     </main>
+
+    <style>
+        .rating-stars {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        .rating-stars input:checked ~ label,
+        .rating-stars label:hover,
+        .rating-stars label:hover ~ label {
+            color: #facc15; /* yellow-400 */
+        }
+    </style>
 
     <script>
         // Script for User Dropdown Menu
@@ -176,6 +251,13 @@
                     userMenu.classList.add('hidden');
                 }
             });
+        }
+
+        function toggleRatingForm(formId) {
+            const form = document.getElementById(formId);
+            if (form) {
+                form.classList.toggle('hidden');
+            }
         }
     </script>
 </body>

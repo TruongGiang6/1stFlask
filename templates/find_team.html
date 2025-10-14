@@ -45,12 +45,12 @@
 
     <!-- Main Content -->
     <main class="container mx-auto px-6 py-8">
-        <div class="flex space-x-8">
+        <div class="flex flex-col lg:flex-row lg:space-x-8">
             <!-- Filters Sidebar -->
-            <aside class="w-1/4">
-                <div class="bg-white p-6 rounded-lg shadow-md">
+            <aside class="w-full lg:w-1/4 mb-8 lg:mb-0">
+                <div class="bg-white p-6 rounded-lg shadow-md sticky top-24">
                     <h2 class="text-xl font-bold mb-4">Tìm đội bóng</h2>
-                    <form>
+                    <form id="filter-form">
                         <div class="space-y-4">
                             <div>
                                 <label for="location" class="block text-base font-medium text-gray-700">Địa điểm/Vị trí</label>
@@ -70,10 +70,9 @@
                                 <label for="missing_members" class="block text-base font-medium text-gray-700">Số lượng thành viên còn thiếu</label>
                                 <select id="missing_members" name="missing_members" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md">
                                     <option>Tất cả</option>
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4+</option>
+                                    <option>1-2</option>
+                                    <option>3-5</option>
+                                    <option>5+</option>
                                 </select>
                             </div>
                             <div>
@@ -88,13 +87,7 @@
                             </div>
                             <div>
                                 <label for="activity_time" class="block text-base font-medium text-gray-700">Thời gian hoạt động</label>
-                                <select id="activity_time" name="activity_time" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md">
-                                    <option>Tất cả</option>
-                                    <option>Sáng</option>
-                                    <option>Chiều</option>
-                                    <option>Tối</option>
-                                    <option>Cuối tuần</option>
-                                </select>
+                                <input type="text" id="activity_time" name="activity_time" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md" placeholder="VD: Tối thứ 7">
                             </div>
                             <div class="flex space-x-2 pt-2">
                                 <button type="button" id="reset-filter-button" class="w-1/2 flex items-center justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
@@ -110,9 +103,9 @@
             </aside>
 
             <!-- Results -->
-            <div class="w-3/4">
+            <div class="w-full lg:w-3/4">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 id="results-count" class="text-xl font-bold">Kết quả (0)</h2>
+                    <h2 id="results-count" class="text-xl font-bold">Kết quả ({{ team_posts|length }})</h2>
                     <div>
                         <select class="border-gray-300 rounded-md">
                             <option>Thời gian: Mới nhất</option>
@@ -122,62 +115,37 @@
                 </div>
                 <div id="results-container" class="bg-white p-4 rounded-lg shadow-md">
                     <div id="results-list" class="space-y-4">
-                        <!-- Example Team 1 -->
-                        <div class="team-card border border-gray-200 rounded-lg p-4 flex justify-between items-center hover:bg-gray-50 transition" data-location="Cầu Giấy" data-missing="2" data-skill="Trung bình" data-activity="Tối" data-author-name="Nguyễn Văn A" data-author-phone="0912345678">
-                            <div class="flex items-center space-x-4">
-                                <img src="https://ui-avatars.com/api/?name=CG&background=0D8ABC&color=fff&rounded=true&size=56" alt="Team Logo" class="rounded-full">
-                                <div>
-                                    <h3 class="text-lg font-bold text-green-700">FC Cầu Giấy United</h3>
-                                    <p class="text-sm text-gray-600 mt-1"><i class="fa-solid fa-location-dot w-4 mr-1 text-center"></i>Khu vực: Cầu Giấy</p>
-                                    <div class="flex space-x-4 text-sm text-gray-600 mt-1">
-                                        <span><i class="fa-solid fa-users w-4 mr-1 text-center"></i>Thiếu: 2 người</span>
-                                        <span><i class="fa-solid fa-gauge-high w-4 mr-1 text-center"></i>Trình độ: Trung bình</span>
-                                        <span><i class="fa-solid fa-clock w-4 mr-1 text-center"></i>Hoạt động: Tối</span>
+                        {% if team_posts %}
+                            {% for post in team_posts %}
+                            <div class="team-card border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center hover:bg-gray-50 transition" 
+                                 data-location="{{ post.location }}" 
+                                 data-missing="{{ post.members_needed }}" 
+                                 data-skill="{{ post.team_skill_level }}" 
+                                 data-activity="{{ post.activity_time }}" 
+                                 data-author-name="{{ post.username }}" 
+                                 data-author-phone="{{ post.team_author.phone if post.team_author and post.team_author.phone else 'Chưa có' }}">
+                                <div class="flex items-center space-x-4">
+                                    <img src="https://ui-avatars.com/api/?name={{ post.team_name[0] }}&background=random&color=fff&rounded=true&size=56" alt="Team Logo" class="rounded-full">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-green-700">{{ post.team_name }}</h3>
+                                        <p class="text-sm text-gray-600 mt-1"><i class="fa-solid fa-location-dot w-4 mr-1 text-center"></i>Khu vực: {{ post.location }}</p>
+                                        <div class="flex flex-col sm:flex-row sm:space-x-4 text-sm text-gray-600 mt-1">
+                                            <span><i class="fa-solid fa-users w-4 mr-1 text-center"></i>Thiếu: {{ post.members_needed }}</span>
+                                            <span><i class="fa-solid fa-gauge-high w-4 mr-1 text-center"></i>Trình độ: {{ post.team_skill_level }}</span>
+                                            <span><i class="fa-solid fa-clock w-4 mr-1 text-center"></i>Hoạt động: {{ post.activity_time }}</span>
+                                        </div>
                                     </div>
                                 </div>
+                                <button class="contact-button mt-4 sm:mt-0 bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition w-full sm:w-auto">
+                                    Xin gia nhập
+                                </button>
                             </div>
-                            <button class="contact-button bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition">
-                                Xin gia nhập
-                            </button>
-                        </div>
-
-                        <!-- Example Team 2 -->
-                        <div class="team-card border border-gray-200 rounded-lg p-4 flex justify-between items-center hover:bg-gray-50 transition" data-location="Hà Đông" data-missing="1" data-skill="Khá" data-activity="Cuối tuần" data-author-name="Trần Thị B" data-author-phone="0987654321">
-                            <div class="flex items-center space-x-4">
-                                <img src="https://ui-avatars.com/api/?name=HD&background=1E90FF&color=fff&rounded=true&size=56" alt="Team Logo" class="rounded-full">
-                                <div>
-                                    <h3 class="text-lg font-bold text-green-700">FC Hà Đông Warriors</h3>
-                                    <p class="text-sm text-gray-600 mt-1"><i class="fa-solid fa-location-dot w-4 mr-1 text-center"></i>Khu vực: Hà Đông</p>
-                                    <div class="flex space-x-4 text-sm text-gray-600 mt-1">
-                                        <span><i class="fa-solid fa-users w-4 mr-1 text-center"></i>Thiếu: 1 người</span>
-                                        <span><i class="fa-solid fa-gauge-high w-4 mr-1 text-center"></i>Trình độ: Khá</span>
-                                        <span><i class="fa-solid fa-clock w-4 mr-1 text-center"></i>Hoạt động: Cuối tuần</span>
-                                    </div>
-                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div id="no-posts-placeholder" class="text-center text-gray-500 py-16">
+                                <p>Chưa có đội nào đăng tin tuyển thành viên.</p>
                             </div>
-                            <button class="contact-button bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition">
-                                Xin gia nhập
-                            </button>
-                        </div>
-
-                        <!-- Example Team 3 -->
-                        <div class="team-card border border-gray-200 rounded-lg p-4 flex justify-between items-center hover:bg-gray-50 transition" data-location="Thanh Xuân" data-missing="3" data-skill="Yếu" data-activity="Sáng" data-author-name="Lê Văn C" data-author-phone="0905123456">
-                            <div class="flex items-center space-x-4">
-                                <img src="https://ui-avatars.com/api/?name=TX&background=FF4500&color=fff&rounded=true&size=56" alt="Team Logo" class="rounded-full">
-                                <div>
-                                    <h3 class="text-lg font-bold text-green-700">FC Thanh Xuân Legends</h3>
-                                    <p class="text-sm text-gray-600 mt-1"><i class="fa-solid fa-location-dot w-4 mr-1 text-center"></i>Khu vực: Thanh Xuân</p>
-                                    <div class="flex space-x-4 text-sm text-gray-600 mt-1">
-                                        <span><i class="fa-solid fa-users w-4 mr-1 text-center"></i>Thiếu: 3 người</span>
-                                        <span><i class="fa-solid fa-gauge-high w-4 mr-1 text-center"></i>Trình độ: Yếu</span>
-                                        <span><i class="fa-solid fa-clock w-4 mr-1 text-center"></i>Hoạt động: Sáng</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="contact-button bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition">
-                                Xin gia nhập
-                            </button>
-                        </div>
+                        {% endif %}
 
                         <div id="no-results" class="text-center text-gray-500 py-16 hidden">
                             <p>Không tìm thấy đội bóng nào phù hợp.</p>
@@ -231,19 +199,20 @@
         const locationSelect = document.getElementById('location');
         const missingMembersSelect = document.getElementById('missing_members');
         const skillLevelSelect = document.getElementById('skill_level');
-        const activityTimeSelect = document.getElementById('activity_time');
+        const activityTimeInput = document.getElementById('activity_time');
         const resetFilterButton = document.getElementById('reset-filter-button');
         const filterButton = document.getElementById('filter-button');
         
         const teamCards = document.querySelectorAll('.team-card');
         const resultsCountEl = document.getElementById('results-count');
         const noResultsEl = document.getElementById('no-results');
+        const noPostsEl = document.getElementById('no-posts-placeholder');
 
         function filterTeams() {
             const location = locationSelect.value;
             const missing = missingMembersSelect.value;
             const skill = skillLevelSelect.value;
-            const activity = activityTimeSelect.value;
+            const activity = activityTimeInput.value.toLowerCase();
             
             let visibleCount = 0;
 
@@ -251,12 +220,12 @@
                 const cardLocation = card.dataset.location;
                 const cardMissing = card.dataset.missing;
                 const cardSkill = card.dataset.skill;
-                const cardActivity = card.dataset.activity;
+                const cardActivity = card.dataset.activity.toLowerCase();
 
                 const locationMatch = location === 'Tất cả' || location === cardLocation;
-                const missingMatch = missing === 'Tất cả' || (missing === '4+' ? parseInt(cardMissing) >= 4 : missing === cardMissing);
+                const missingMatch = missing === 'Tất cả' || missing === cardMissing;
                 const skillMatch = skill === 'Tất cả' || skill === cardSkill;
-                const activityMatch = activity === 'Tất cả' || activity === cardActivity;
+                const activityMatch = activity === '' || cardActivity.includes(activity);
 
                 if (locationMatch && missingMatch && skillMatch && activityMatch) {
                     card.style.display = 'flex';
@@ -267,10 +236,14 @@
             });
 
             resultsCountEl.textContent = `Kết quả (${visibleCount})`;
-            if (visibleCount === 0) {
+            if (visibleCount === 0 && teamCards.length > 0) {
                 noResultsEl.classList.remove('hidden');
             } else {
                 noResultsEl.classList.add('hidden');
+            }
+            
+            if (teamCards.length > 0) {
+                if(noPostsEl) noPostsEl.classList.add('hidden');
             }
         }
 
@@ -278,15 +251,12 @@
             locationSelect.value = 'Tất cả';
             missingMembersSelect.value = 'Tất cả';
             skillLevelSelect.value = 'Tất cả';
-            activityTimeSelect.value = 'Tất cả';
+            activityTimeInput.value = '';
             filterTeams();
         }
 
-        // Add event listeners
         filterButton.addEventListener('click', filterTeams);
         resetFilterButton.addEventListener('click', resetFilters);
-
-        // Initial filter on page load to set the correct count
         document.addEventListener('DOMContentLoaded', filterTeams);
 
         // --- Modal Logic ---
@@ -301,7 +271,6 @@
             modalAuthorName.textContent = name || 'Chưa có thông tin';
             modalAuthorPhone.textContent = phone || 'Chưa có thông tin';
             contactModal.classList.remove('hidden');
-            // Animate in
             setTimeout(() => {
                 contactModalContent.classList.remove('scale-95', 'opacity-0');
                 contactModalContent.classList.add('scale-100', 'opacity-100');
@@ -309,12 +278,11 @@
         }
 
         function hideContactModal() {
-            // Animate out
             contactModalContent.classList.add('scale-95', 'opacity-0');
             contactModalContent.classList.remove('scale-100', 'opacity-100');
             setTimeout(() => {
                 contactModal.classList.add('hidden');
-            }, 200); // Match transition duration
+            }, 200);
         }
 
         contactButtons.forEach(button => {
@@ -332,7 +300,6 @@
                 hideContactModal();
             }
         });
-
     </script>
 
 </body>

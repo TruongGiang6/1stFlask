@@ -34,12 +34,28 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     location = db.Column(db.String(200), nullable=False)
+    pitch = db.Column(db.String(100), nullable=False)
     match_date = db.Column(db.String(50), nullable=False)
     skill_level = db.Column(db.String(50), nullable=False)
     time_frame = db.Column(db.String(50), nullable=False)
     notes = db.Column(db.Text, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     username = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='open')
+    ratings = db.relationship('Rating', backref='post', lazy=True)
+
+# Bảng đánh giá
+class Rating(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    stars = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.Text, nullable=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    rater_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    rated_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    # Define relationships to get user objects
+    rater = db.relationship('User', foreign_keys=[rater_id])
+    rated_user = db.relationship('User', foreign_keys=[rated_user_id])
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -123,6 +139,7 @@ def find_opponent():
         # Xử lý dữ liệu form ở đây
         title = request.form.get('title')
         location = request.form.get('location')
+        pitch = request.form.get('pitch')
         match_date = request.form.get('match_date')
         skill_level = request.form.get('skill_level')
         time_frame = request.form.get('time_frame')
@@ -131,6 +148,7 @@ def find_opponent():
         new_post = Post(
             title=title,
             location=location,
+            pitch=pitch,
             match_date=match_date,
             skill_level=skill_level,
             time_frame=time_frame,
@@ -144,13 +162,20 @@ def find_opponent():
         flash(f'Đã đăng tin "{title}" thành công!', 'success')
         return redirect(url_for('find_opponent'))
 
-    posts = Post.query.order_by(Post.id.desc()).all()
-    return render_template('find_opponent.html', posts=posts)
+    # Lấy các bài đăng của riêng người dùng hiện tại
+    posts = Post.query.filter_by(user_id=current_user.id).order_by(Post.id.desc()).all()
+    
+    # Lấy các đánh giá liên quan đến các bài đăng này
+    post_ids = [post.id for post in posts]
+    ratings = Rating.query.filter(Rating.post_id.in_(post_ids), Rating.rater_id == current_user.id).all()
+    ratings_by_post = {rating.post_id: rating for rating in ratings}
+
+    return render_template('find_opponent.html', posts=posts, ratings=ratings_by_post)
 
 @app.route('/find_match')
 @login_required
 def find_match():
-    posts = Post.query.order_by(Post.id.desc()).all()
+    posts = Post.query.filter_by(status='open').order_by(Post.id.desc()).all()
     return render_template('find_match.html', posts=posts)
 
 @app.route('/map')
@@ -185,6 +210,68 @@ def delete_post(post_id):
     db.session.commit()
     flash(f'Đã xóa bài đăng "{post.title}".', 'success')
     return redirect(url_for('admin'))
+
+@app.route('/post/delete/<int:post_id>', methods=['POST'])
+@login_required
+def delete_user_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.user_id != current_user.id:
+        flash('Bạn không có quyền xóa bài đăng này!', 'error')
+        return redirect(url_for('find_opponent'))
+    
+    db.session.delete(post)
+    db.session.commit()
+    flash(f'Đã xóa bài đăng "{post.title}".', 'success')
+    return redirect(url_for('find_opponent'))
+
+@app.route('/post/close/<int:post_id>', methods=['POST'])
+@login_required
+def close_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.user_id != current_user.id:
+        flash('Bạn không có quyền đóng bài đăng này!', 'error')
+        return redirect(url_for('find_opponent'))
+    
+    post.status = 'closed'
+    db.session.commit()
+    flash(f'Đã đóng tin "{post.title}". Giờ bạn có thể đánh giá đối thủ.', 'success')
+    return redirect(url_for('find_opponent'))
+
+@app.route('/rate_opponent/<int:post_id>', methods=['POST'])
+@login_required
+def rate_opponent(post_id):
+    post = Post.query.get_or_404(post_id)
+    # The user being rated is the author of the post
+    rated_user_id = post.user_id
+    
+    # Check if the current user has already rated this post/opponent
+    existing_rating = Rating.query.filter_by(post_id=post.id, rater_id=current_user.id).first()
+    if existing_rating:
+        flash('Bạn đã đánh giá trận đấu này rồi.', 'error')
+        return redirect(url_for('find_opponent'))
+
+    stars = request.form.get('rating')
+    comment = request.form.get('comment')
+
+    if not stars:
+        flash('Bạn phải chọn số sao để đánh giá.', 'error')
+        return redirect(url_for('find_opponent'))
+
+    new_rating = Rating(
+        stars=int(stars),
+        comment=comment,
+        post_id=post.id,
+        rater_id=current_user.id,
+        rated_user_id=rated_user_id
+    )
+    db.session.add(new_rating)
+    db.session.commit()
+
+    flash('Cảm ơn bạn đã gửi đánh giá!', 'success')
+    return redirect(url_for('find_opponent'))
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
